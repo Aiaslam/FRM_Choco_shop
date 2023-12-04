@@ -1,0 +1,145 @@
+<%- include('header') %>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Products grid</h2>
+            <p>Lorem ipsum dolor sit amet.</p>
+        </div>
+        <div>
+            <a href="/admin/addProduct" class="btn btn-primary btn-sm rounded">Create new</a>
+        </div>
+    </div>
+    <!-- <form onsubmit="applyFilters(event)">
+        <header class="card card-body mb-4">
+            <!-- Add category filter dropdown -->
+            <div class="col-lg-2 col-6 col-md-3">
+               
+            </div>
+
+            <!-- Add price filter dropdown -->
+            <div class="col-lg-2 col-6 col-md-3">
+                <select class="form-select" id="priceFilter" onchange="applyFilters(event)">
+                    <option value="">All prices</option>
+                    <option value="lowToHigh">Low to High</option>
+                    <option value="highToLow">High to Low</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="mycategory">Select a category:</label>
+                <select class="form-select" id="sortByFilter" onchange="applyFilters(event)">
+                  <option value="">Select</option>
+                  <% Category.forEach(function(category) { %>
+                    <option value="<%= category.id %>"><%= category.name %></option>
+                  <% }); %>
+                </select>
+                <p class="error-message" id="categoryError"></p>
+              </div>
+
+            <!-- <div class="col-lg-2 col-6 col-md-3">
+                <select class="form-select" id="sortByFilter" onchange="applyFilters(event)">
+                    <option value="dateAddedDesc">Newly Added</option>
+                    <option value="nameAsc">Name A-Z</option>
+                    <option value="nameDesc">Name Z-A</option>
+           Add other sorting options as needed -->
+               
+            <!-- </div> --> 
+
+          
+        </header>
+        <div class="card-body">
+            <!-- Add a search input for filtering by name -->
+             <div class="search-style-2">
+                <form action="/admin/searchProduct" method="post">
+                    
+                    <input type="text" name="search" placeholder="Search for items...">
+                   
+                    <button class="btn btn-sm" type="submit">Search</button>
+                </form>
+            </div>
+
+            <div id="productContainer" class="row gx-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 row-cols-xxl-5">
+                <% if (products.length > 0) { %>
+                    <% for (let i = 0; i < products.length; i++) { %>
+                 
+                        <div class="col">
+                            <div class="card card-product-grid">
+                                <% if (products[i].images && products[i].images.length > 0) { %>
+                                <a href="#" class="img-wrap">
+                                    <img style="height: 350px;" src="/admin/assets/imgs/cropedImages/<%= products[i].images[0] %>" alt="Product Image">
+                                </a>
+                                <% } else { %>
+                                    <p>No image available</p>
+                                <% } %>
+                                <div class="info-wrap">
+                                    <a href="#" class="title text-truncate">
+                                        <%= products[i].title %>
+                                    </a>
+                                    <div class="price mb-2">$<%= products[i].price %>
+                                    </div>
+                                    <a href="/admin/editProduct?id=<%= products[i]._id %>"
+                                        class="btn btn-sm font-sm rounded btn-brand">
+                                        <i class="material-icons md-edit"></i> Edit
+                                    </a>
+                                    <a href="#" class="btn btn-sm font-sm btn-light rounded"
+                                        onclick="confirmDelete('<%= products[i]._id %>')">
+                                        <i class="material-icons md-delete_forever"></i> Delete
+                                    </a>
+                                    <% if (products[i].status == true) { %>
+                                        <span>
+                                            <a class="badge rounded-pill alert-success"
+                                                href="/admin/unlistProduct?id=<%= products[i]._id %>">Unlist</a>
+                                        </span>
+                                    <% } else { %>
+                                        <span>
+                                            <a class="badge rounded-pill alert-success"
+                                                href="/admin/listProduct?id=<%= products[i]._id %>">list</a>
+                                        </span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                        <% } else { %>
+                            <div class="col">
+                                <p>Product not found</p>
+                            </div>
+                        <% } %>
+                    </div>
+        </div>
+    <!-- </form> -->
+
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>">
+                            <%= i %>
+                        </a>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+</section>
+
+<script>
+    function confirmDelete(productId) {
+        // Display a confirmation dialog
+        const isConfirmed = confirm('Are you sure you want to delete this product?');
+        // If confirmed, navigate to the target URL
+        if (isConfirmed) {
+            window.location.href = `/admin/deleteproduct?id=${productId}`;
+        }
+    }
+
+    
+
+//    
+// </script>
+
+
+<%- include('footer') %>
+
+

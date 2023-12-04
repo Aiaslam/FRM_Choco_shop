@@ -1,0 +1,142 @@
+<%- include('header') %>
+<h1>Category List</h1>
+
+<div class="card-body">
+  <!-- item-list.ejs -->
+  <div class="col-md-9">
+    <div class="table-responsive">
+      <div>
+        <a href="/admin/createCategory" class="btn btn-primary btn-sm rounded">Create new</a>
+      </div>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th class="text-center">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" />
+              </div>
+            </th>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+
+        <% if (Category.length > 0) { %>
+          <tbody>
+            <% for (let i = 0; i < Category.length; i++) { %>
+              <tr>
+                <td class="text-center">
+                  <div class="form-check">
+                    <!-- Add your checkbox input here if needed -->
+                  </div>
+                </td>
+                <td class="text-center">
+                  <img class="rounded" style="width: 50px; height: 60px;" src="<%= Category[i].croppedImageData %>" alt="Cropped Image">
+                </td>
+                <td><b><%= Category[i].name %></b></td>
+                <td><%= Category[i].description %></td>
+               
+                <td class="text-end">
+
+                  <a href="#" class="btn btn-sm font-sm btn-light rounded" onclick="confirmDelete('<%= Category[i]._id %>')">
+                    <i class="material-icons md-delete_forever"></i> Delete
+                  </a>
+                  
+                  <a class="btn btn-secondary" href="/admin/editCategory?id=<%= Category[i]._id %>">Edit</a>
+                  
+                  <!-- <a class="badge rounded-pill alert-success"
+                  /listProduct
+                  href="/admin/<%= Category[i].status ? 'unlistCategory' : 'listCategory' %>?id=<%=Category[i]._id%>">
+                  <%= Category[i].status ? 'Unlist' : 'List' %>
+              </a> -->
+              
+
+              <% if (Category[i].status == true) { %>
+                <span>
+                    <a class="badge rounded-pill alert-success"
+                    href="/admin/unlistCategory/?id=<%=Category[i]._id %>">Unlist</a>
+                </span>
+            <% } else { %>
+                <span>
+                    <a class="badge rounded-pill alert-success"
+                    href="/admin/listingCategory/?id=<%=Category[i]._id %>">list</a>
+                </span> 
+            <% } %>
+                  <!-- Add your other actions here -->
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        <% } else { %>
+          <tr>
+            <td colspan="2">Category not found</td>
+          </tr>
+        <% } %>
+      </table>
+    </div>
+  </div> 
+  
+<div class="pagination-area mt-15 mb-50">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-start">
+            <% for (let i = 1; i <= totalpages; i++) { %>
+                <li class="page-item <%= i === currentpage ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>">
+                        <%= i %>
+                    </a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+</div>
+<!-- .col// -->
+</div> <!-- .row // -->
+
+<!-- <% if (totalpages) { %>
+  <div class="pagination justify-content-center">
+    <% if (currentpage > 1) { %>
+      <a class="btn btn-sm" href="?page=<%= currentpage - 1 %>">Previous</a>
+    <% } %>
+
+    <% for (let i = 1; i <= totalpages; i++) { %>
+      <a class="btn btn-sm <%= i === currentpage ? 'active' : '' %>" href="?page=<%= i %>"><%= i %></a>
+    <% } %>
+
+    <% if (currentpage < totalpages) { %>
+      <a class="btn btn-sm" href="?page=<%= currentpage + 1 %>">Next</a>
+    <% } %>
+  </div>
+<% } %> -->
+<!-- 
+<div class="pagination-area mt-15 mb-50">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-start">
+            <% for (let i = 1; i <= totalpages; i++) { %>
+                <li class="page-item <%= i === currentpage ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>">
+                        <%= i %>
+                    </a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+</div> -->
+
+
+</section> <!-- content-main end// -->
+<script>
+  function confirmDelete(categoryId) {
+    // Display a confirmation dialog
+    const isConfirmed = confirm('Are you sure you want to delete this category?');
+
+    // If confirmed, navigate to the target URL
+    if (isConfirmed) {
+      window.location.href = `/admin/deleteCategory?id=${categoryId}`;
+    }
+  }
+</script>
+
+<%- include('footer') %>  

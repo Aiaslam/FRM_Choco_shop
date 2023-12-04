@@ -1,0 +1,148 @@
+<%- include('header')  %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+
+<section class="content-main">
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Create New Category</h2>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Basic</h4>
+                </div>
+                <div class="card-body">
+                    <form id="productForm" action="/admin/createCategory" method="post" enctype="multipart/form-data" onsubmit="return validateCategoryForm()">
+                        <div>
+                            <button class="btn btn-md rounded font-sm hover-up">Publish</button>
+                        </div>
+                        <div class="mb-4">
+                            <label for="category_name" class="form-label">Category Title</label>
+                            <input type="text" placeholder="Type here" name="name" class="form-control" id="category_name">
+                            <p class="error-message" id="titleError"></p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Full Description</label>
+                            <textarea placeholder="Type here" name="description" class="form-control" id="Description" rows="4"></textarea>
+                            <p class="error-message" id="descriptionError"></p>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="mb-4">
+                                <label for="category_name" class="form-label">type</label>
+                                <input type="text" placeholder="Type here" name="type" class="form-control" id="type">
+                                <p class="error-message" id="typeError"></p>
+                            </div>
+                            <div class="mb-4">
+                                <input type="file" accept="image/*" id="imageInput" name="image" multiple>  
+                                <br>
+                                <div id="imagePreview"></div>
+                                <br>
+                                <button type="button" id="cropButton">Crop Image</button>
+                                <br>
+                                <canvas id="croppedCanvas" style="display: none;"></canvas>
+                                <br>
+                                <img id="croppedImage" src="" alt="Cropped Image">
+                                <input type="hidden" name="croppedImageData" id="croppedImageData" value="">6
+                            </div>
+                            <button type="submit" id="submitButton">Submit</button>
+                            <% if (error) { %>
+                                <p class="error-message"><%= error %></p>
+                            <% } %>
+                        </form>
+                    </div>
+                </div> <!-- card end// -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // JavaScript code for handling image cropping
+
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const cropButton = document.getElementById('cropButton');
+        const croppedCanvas = document.getElementById('croppedCanvas');
+        const croppedImage = document.getElementById('croppedImage');
+        let croppie;
+
+        imageInput.addEventListener('change', handleImageSelection);
+
+        function handleImageSelection() {
+            const files = imageInput.files;
+
+            if (files.length > 0) {
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    const image = new Image();
+                    image.src = event.target.result;
+
+                    image.onload = () => {
+                        imagePreview.innerHTML = '';
+                        imagePreview.appendChild(image);
+
+                        if (croppie) {
+                            croppie.destroy();
+                        }
+
+                        croppie = new Croppie(image, {
+                            viewport: { width: 200, height: 200 },
+                            boundary: { width: 300, height: 300 },
+                        });
+                    };
+                };
+
+                reader.readAsDataURL(files[0]);
+            }
+        }
+
+        cropButton.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            if (!croppie) {
+                return;
+            }
+
+            croppie.result('base64').then((base64) => {
+                croppedImage.src = base64;
+
+                // Set the base64 data to the hidden input field
+                const croppedImageDataInput = document.getElementById('croppedImageData');
+                croppedImageDataInput.value = base64;
+            });
+        });
+    </script>
+    <script>
+        function validateCategoryForm() {
+            const title = document.getElementById('category_name');
+            const description = document.getElementById('Description');
+            const images = document.getElementById('images');
+            const titleError = document.getElementById('titleError');
+            const descriptionError = document.getElementById('descriptionError');
+
+            titleError.innerHTML = '';
+            descriptionError.innerHTML = '';
+
+            if (title.value.trim() === '') {
+                titleError.innerHTML = 'Field is required';
+                return false;
+            }
+
+            if (description.value.trim() === '') {
+                descriptionError.innerHTML = 'Field is required';
+                return false;
+            }
+
+            if (imageInput.files.length === 0) {
+                alert('Please select at least one image.');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+
+    <%- include('footer')  %>

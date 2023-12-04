@@ -1,0 +1,93 @@
+<%- include('header') %>
+
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html" rel="nofollow">Home</a>
+                    <span></span> Pages
+                    <span></span> Edit Address
+                </div>
+            </div>
+        </div>
+        <section class="pt-150 pb-150">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row justify-content-center">
+                           
+                            <div class="col-md-8">
+                                <div class="tab-content dashboard-content">
+                                   
+                                       
+
+                                        <!-- card for the dash bord user simple details -->
+                                           
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5> Edit Address</h5>
+                                            </div>
+                                            <div class="card-body">
+                                               
+                                                <form method="post" action="/editAddress" >
+                                                    <div class="row">
+                                                        <div class="form-group col-md-12">
+                                                            <label><h5>Full Name</h5></label>
+                                                            <input required="" class="form-control square" value="<%= address.fullName %>" name="fullName" type="text">
+                                                        </div>
+                                                        
+                                                        <div class="form-group col-md-12">
+                                                            <label><h5>Mobile number</h5></label>
+                                                            <input required="" class="form-control square" value="<%= address.mobile %>" name="mobile" type="text">
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label><h5>Region</h5></label>
+                                                            <input required="" class="form-control square" name="region" value="<%= address.region %>" type="text">
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label><h5>Pincode</h5></label>
+                                                            <input required="" class="form-control square" value="<%= address.pinCode %>" name="pinCode" type="text">
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label><h5>Flat, House no., Building, Company, Apartment</h5></label>
+                                                            <input required="" class="form-control square" value="<%= address.addressLine %>" name="addressLine" type="text">
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label> <h5>Area, Street, Sector, Village</h5></label>
+                                                            <input required="" class="form-control square" name="areaStreet" value=" <%= address. areaStreet %>" type="text">
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label><h5>Landmark</h5> </label>
+                                                            <input required="" class="form-control square" name="ladmark" value=" <%= address.ladmark %>" type="text">
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label><h5>Town/City</h5> </label>
+                                                            <input required="" class="form-control square" name="townCity" value="<%= address.townCity %>" type="text">
+                                                        </div> <div class="form-group col-md-6">
+                                                            <label><h5>State</h5> </label>
+                                                            <input required="" class="form-control square" name="state" value="<%= address.state %>" type="text">
+                                                        </div>
+                                                       
+                                                        <div class="form-group col-md-12">
+                                                            <label><h5>Adress Type</h5> </label>
+                                                            <input required="" class="form-control square" name="adressType" value="<%= address.adressType %>" type="text">
+                                                        </div>
+                                                        <input type="hidden" name="id" value="<%=address._id %>">
+                                                        <div class="col-md-12">
+                                                            <button type="submit" class="btn btn-fill-out submit" name="submit" value="Submit">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <%- include('footer') %>
+   

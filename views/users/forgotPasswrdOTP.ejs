@@ -1,0 +1,184 @@
+<%- include('header') %>
+
+<div class="container">
+    <br>
+    <br>
+    <br>
+
+    <div class="row text-center">
+        <br>
+        <br>
+        <br>
+        <h4 class="">Verify OTP</h4>
+
+        <br>
+        <br>
+    </div>
+    <div class="row mt-5 justify-content-center">
+        <div class="col-lg-6">
+            <div class="container height-100 d-flex justify-content-center align-items-center">
+                <div class="position-relative">
+                    <div class="card p-2 text-center">
+                        <h6>Please enter the one-time password <br><br> to verify your account</h6>
+                        <br>
+                        <div> <span>A code has been sent to</span> <small>*******9897</small> </div>
+                        <br>
+                        <form action="/forgotPsdOTP" method="post" onsubmit="return validateForm()">
+                            <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
+                                <input class="m-2 text-center form-control rounded" type="text" id="first" maxlength="1" name="first" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="second" maxlength="1" name="second" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="third" maxlength="1" name="third" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="fourth" maxlength="1" name="fourth" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="fifth" maxlength="1" name="fifth" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="sixth" maxlength="1" name="six" />
+                            </div>
+                            <div class="mt-4">
+                                <div>
+                                    <p id="timer">Time remaining: 1:00</p>
+                                    <p id="resendMessage"></p>
+                                </div>
+                                <a onclick="startResendTimer()" href="/forgotpaswrdResend" id="resendButton" style="display: none;">Resend OTP</a>
+                                <button type="submit" class="btn btn-primary px-4 validate" id="submitButton">Submit</button>
+                            </div>
+                        </form>
+                        <br>
+                    </div>
+                    <div class="card-2">
+                        <div class="content d-flex justify-content-center align-items-center">
+                            <span>Didn't get the code</span> <button onclick="startResendTimer()" href="#"
+                                class="text-decoration-none ms-3" id="resendLink">Resend(1/3)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br> <br>
+    <br>
+    <br>
+</div>
+
+<!-- Custom Modal for OTP Expiry -->
+<div class="modal fade" id="customOtpExpiredModal" tabindex="-1" aria-labelledby="customOtpExpiredModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customOtpExpiredModalLabel">Custom OTP Expired</h5>
+            </div>
+            <div class="modal-body">
+                Your OTP has expired. Click the button to resend OTP.
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="expireOtpAndResend()" onclick="startTimer()" class="btn btn-primary" id="resendButtonModal">Resend OTP</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var countdown;
+    var resendCount = 0;
+    var resendButton = document.getElementById('resendButton');
+    var resendLink = document.getElementById('resendLink');
+
+    // Start the timer on page load
+    startTimer();
+
+    function startTimer() {
+        // Set the initial time to 60 seconds
+        var time = 60;
+
+        // Display the initial time
+        displayTime(time);
+
+        // Start the countdown
+        countdown = setInterval(function () {
+            time--;
+            displayTime(time);
+
+            // If the timer reaches 0, enable the "Resend OTP" button and show the message
+            if (time <= 0) {
+                clearInterval(countdown);
+                $('#customOtpExpiredModal').modal('show');
+                resendButton.style.display = 'block';
+                document.getElementById('resendMessage').innerText = 'You can now resend OTP.';
+            }
+        }, 1000);
+    }
+
+    function startResendTimer() {
+        // Hide the "Resend OTP" button until the resend limit is reached
+        resendButton.style.display = 'none';
+
+        // Reset the timer
+        clearInterval(countdown);
+        document.getElementById('resendMessage').innerText = '';
+
+        // Start the timer again
+        startTimer();
+
+        // Increment the resend count
+        resendCount++;
+
+        // Show the "Resend OTP" button after the resend limit is reached
+        if (resendCount < 3) {
+            resendLink.style.display = 'block';
+        } else {
+            resendLink.style.display = 'none';
+            document.getElementById('resendMessage').innerText = 'Resend limit reached.';
+            resendCount = 0; // Reset resend count after the third attempt
+        }
+    }
+
+    function validateForm() {
+        // Add your OTP validation logic here
+
+        // Example: Check if each OTP input is a number
+        var otpInputs = document.querySelectorAll('.inputs input');
+        for (var i = 0; i < otpInputs.length; i++) {
+            if (isNaN(otpInputs[i].value)) {
+                alert('Please enter a valid OTP.');
+                return false;
+            }
+        }
+
+        // Additional validation rules can be added as needed
+
+        return true;
+    }
+
+    function displayTime(seconds) {
+        var minutes = Math.floor(seconds / 60);
+        var remainingSeconds = seconds % 60;
+
+        // Add leading zero if seconds are less than 10
+        remainingSeconds = remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds;
+
+        document.getElementById('timer').innerText = 'Time remaining: ' + minutes + ':' + remainingSeconds;
+    }
+
+    function expireOtpAndResend() {
+        // Add your AJAX request here to expire the OTP and resend
+        $.ajax({
+            method: 'get',
+            url: "/expireAndResend",
+            success: function (response) {
+                if (response.status) {
+                    alert('OTP expired. Resent OTP successfully.');
+                }
+            }
+        });
+
+        // You may want to close the modal after resending
+        $('#customOtpExpiredModal').modal('hide');
+    }
+</script>
+
+<!-- Include Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<%- include('footer') %>
