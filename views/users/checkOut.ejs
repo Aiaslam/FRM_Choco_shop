@@ -8,64 +8,17 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Shop
+                    <a href="/home" rel="nofollow">Home</a>
+                    <span></span>
+                    <a href="/Shop" rel="">Shop</a>
+                    
                     <span></span> Checkout
                 </div>
             </div>
         </div>
         <section class="mt-50 mb-50">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 mb-sm-15">
-                        <div class="toggle_info">
-                            <span><i class="fi-rs-user mr-10"></i><span class="text-muted">Already have an account?</span> <a href="#loginform" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to login</a></span>
-                        </div>
-                        <div class="panel-collapse collapse login_form" id="loginform">
-                            <div class="panel-body">
-                                <p class="mb-30 font-sm">If you have shopped with us before, please enter your details below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
-                                <form method="post">
-                                    <div class="form-group">
-                                        <input type="text" name="email" placeholder="Username Or Email">
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" name="password" placeholder="Password">
-                                    </div>
-                                    <div class="login_footer form-group">
-                                        <div class="chek-form">
-                                            <div class="custome-checkbox">
-                                                <input class="form-check-input" type="checkbox" name="checkbox" id="remember" value="">
-                                                <label class="form-check-label" for="remember"><span>Remember me</span></label>
-                                            </div>
-                                        </div>
-                                        <a href="#">Forgot password?</a>
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-md" name="login">Log in</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="toggle_info">
-                            <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a coupon?</span> <a href="#coupon" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to enter your code</a></span>
-                        </div>
-                        <div class="panel-collapse collapse coupon_form " id="coupon">
-                            <div class="panel-body">
-                                <p class="mb-30 font-sm">If you have a coupon code, please apply it below.</p>
-                                <form method="post">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Enter Coupon Code...">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn  btn-md" name="login">Apply Coupon</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
                 <div class="row">
                     <div class="col-12">
                         <div class="divider mt-50 mb-50"></div>
@@ -105,6 +58,7 @@
                                                 <td>₹<%= product[i].price %></td>
                                             </tr>
                                         <% } %>
+                                        
                                     <% } else { %>
                                         <div class="card-body">
                                             <p> No Product in your cart . Please add a product .</p>
@@ -123,12 +77,21 @@
                                          
                                           <td colspan="2"><em><%= offer %></em></td>
                                         </tr>
-                                        <%}else{%>
-                                          <%}%>
                                         <tr>
+                                            <th>Total</th>                 
+                                            <td colspan="2" class="product-subtotal"><span id="totalValue" value="<%= offsum %>" class="font-xl text-brand fw-900">₹<%= offsum %></span></td>
+                                          </tr>
+                                        <%}else{%>
+
+                                            <tr>
+                                                <th>Total</th>
+                                                <td colspan="2" class="product-subtotal"><span id="totalValue" value="<%= sum %>" class="font-xl text-brand fw-900">₹<%= sum %></span></td>
+                                              </tr>
+                                          <%}%>
+                                        <!-- <tr>
                                         <th>Total</th>
                                         <td colspan="2" class="product-subtotal"><span id="totalValue" value="<%= sum %>" class="font-xl text-brand fw-900">₹<%= sum %></span></td>
-                                      </tr>
+                                      </tr> -->
                             </table>
 
                             <% if (coupon.length > 0) { %>
@@ -446,7 +409,7 @@ async function copyToClipboard(text) {
 
 
 async function placeOrder(userId) {
-    alert('1')
+   
 
             console.log('entered to script while clicking placeorder', userId);
 
@@ -493,14 +456,14 @@ async function placeOrder(userId) {
                     },
                     async: true,
                     success: function (response) {
-                        alert('2')
+                        
 
 
                           console.log(response.method,'this is the response.method before entering to  if (response.method == cod)');
 
                           if (response.method == 'cod') {
                              
-                            console.log('inside response.method== cod in script tag @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+                            console.log('inside response.method== cod in script tag ');
 
                             $.ajax({
                                 url: '/dltAllCrtItm',
@@ -529,7 +492,7 @@ async function placeOrder(userId) {
                             console.log(response.method,'this is the response.method before entering to  else if (response.method == online)');
 
                         } else if (response.method == 'online') {
-                            alert('3')
+                           
 
                             console.log('entered to response.method == online in script');
 
@@ -549,7 +512,7 @@ async function placeOrder(userId) {
                                 "description": "Order Payment",
                                 "order_id": response.razorpayOrder.id, // Replace with actual order ID
                                 "handler": function (response) {
-                                    console.log('hellllllllllllllllllllllllllllll',response);
+                                    console.log(response);
                                     verifyPayment(response);
 
                                 },
@@ -563,13 +526,13 @@ async function placeOrder(userId) {
                                     "color": "#3399cc"
                                 }
                             };
-                            alert('4')
+                         
                             console.log(options);
 
                             // Create a new Razorpay instance and open the payment dialog
                             var rzp1 = new Razorpay(options);
                             rzp1.open();
-                            alert('5')
+                           
 
                         } else if(response.method == 'wallet'){
                             alert('wallet')
@@ -693,20 +656,22 @@ async function placeOrder(userId) {
 
        
          $.ajax({
-            url:"/useWallet",
+            url:'/useWallet',
             method:"POST",
             data:{
                 total:sum,
                 wallet:wallet,
                 prodId:productId
             },
+            
             success:(response)=>{
+               
+               
                 if(response.status){
                    
-                   
-                  console.log(response.sum,'response.sum');
-                    location.href=`/sumWallet?sum=${response.sum}`
-                    
+                  console.log(response.sum ,response.total,'response.sum ,response.total');
+                  
+                    location.href =  `/sumWallet?sum=${response.sum}&total=${response.total}` 
                 }
             }
         })

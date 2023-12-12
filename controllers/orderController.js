@@ -18,7 +18,7 @@ const checkout = asyncHandler(async (req, res) => {
         const coupon = await Coupon.find({
             'user.userId': { $ne: user._id }
         });
-        console.log('Valid coupons:', coupon);
+        // console.log('Valid coupons:', coupon);
 
 
         const productIds = user.cart.map(cartItem => cartItem.ProductId);
@@ -774,16 +774,26 @@ const orderdtl=asyncHandler(async(req,res)=>{
 //-----------------------------------------
 const useWallet=asyncHandler(async(req,res)=>{
     try {
-       
+         console.log('now it is inside the use wallet');
         const userId=req.session.user;
+        console.log(userId,'userId i n use wallet');
         const user=await User.findById(userId)
+        console.log(user,'this is the user find with user id in uswewallet');
 
         if(user){
+            console.log('now it is inside the user ');
             let a=req.body
-           
+           console.log(a,'this is the req,body inside usewallet');
+           console.log(a.total ,'this is the a.total  inside usewallet');
+
+           console.log(a.wallet ,'this is the a.wallet  inside usewallet');
+
             let sum= a.total - a.wallet
+            let total=a.total
+            console.log(sum ,'this is the sum (a.total - a.wallet) inside usewallet and next is json responce')
            
-           res.json({status:true,sum})
+            res.json({ status: true, sum ,total});
+
         } 
     } catch (error) {
         console.log('errro happemce in cart ctrl in function useWallet',error); 

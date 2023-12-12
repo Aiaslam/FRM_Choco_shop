@@ -184,11 +184,13 @@ const sumWallet=asyncHandler(async(req,res)=>{
 
         await user.save()
         console.log('after saving user.save',user);
-        let sum = req.query.sum || 0
-        console.log(sum,'sum next is rendering');
-       console.log(user, product, sum ,coupon,offer,'{ user, product, sum ,coupon,offer}');
-        res.redirect('/checkOut')
-        // res.render('checkOut')
+        let offsum = req.query.sum 
+        console.log(offsum,'offsum##################################################################################################');
+        let sum =  req.query.total
+        console.log(sum,'sum next is rendering $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+       console.log(user, product, offsum,sum,coupon,offer,'{ user, product, sum ,coupon,offer}');
+       
+        res.render('checkOut',{user,offsum, product, sum ,coupon,offer,})
         console.log('after rendering checkout page');
         
     } catch (error) {
@@ -221,10 +223,10 @@ const sumWalletBuynow= asyncHandler(async(req,res)=>{
 
         await user.save()
 
-        let sum = req.query.sum
+        let offsum = req.query.sum
         console.log('this is sum>>>>',sum);
        
-        res.render('buyNow', { user, product, sum ,coupon,offer})
+        res.render('buyNow', { user, product, offsum ,coupon,offer})
         
 
         

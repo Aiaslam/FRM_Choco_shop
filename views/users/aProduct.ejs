@@ -32,7 +32,7 @@
             <div class="container">
                 <div class="breadcrumb">
                     <a href="/user" rel="nofollow">Home</a>
-                    <span></span> Fashion
+                    <span></span> 
                     <span></span> 
                 </div>
             </div>
@@ -82,10 +82,10 @@
                                             <%= product.title %>
                                         </h2>
                                         <div class="product-detail-rating">
-                                            >
+                                            
                                             <div class="product-rate-cover text-end">
                                                 <div class="product-rate d-inline-block">
-                                                    <div class="product-rating" style="width: <%= product.rating.average *20  %>%"></div>
+                                                 
                                                     </div>
                                                 </div>
                                                 <span class="font-small ml-5 text-muted"> (<%= product.rating.totalRatings  %>  reviews)</span>
@@ -126,7 +126,7 @@
                                                
                                                
                                                 <br>
-                                                <a aria-label="Add To Wishlist" onclick="wishList('<%= product._id %>')" class="action-btn hover-up"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Add To Wishlist" onclick="addToWishlist('<%= product._id %>')" class="action-btn hover-up"><i class="fi-rs-heart"></i></a>
                                                
                                             </div>
                                             <br>
@@ -136,8 +136,7 @@
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                            
-                                            <li class="mb-5">Tags: <a href="#" rel="tag"><%= product.catogary %></a>,
-                                                 <a href="#" rel="tag">Dress</a> </li>
+                                              
                                             <li>Availability:<span class="in-stock text-success ml-5">
                                                 <%= product.quantity %> in  Stock</span></li>
                                         </ul>
@@ -188,11 +187,9 @@
                                                             <div class="single-comment justify-content-between d-flex">
                                                                 <div class="user justify-content-between d-flex">
                                                                     <div class="thumb text-center">
-                                                                        <% if (rating.postedBy.isGoogle) { %>
-                                                                             alt="<%= rating.postedBy.username %>">
-                                                                        <% } else { %>
+                                                                        
                                                                             <img src="/admin/assets/imgs/cropedImages/<%= rating.postedBy.image %>" alt="<%= rating.postedBy.username %>">
-                                                                        <% } %>
+                                                                      
                                                                         <h6><a href="#"><%= rating.postedBy.username %></a></h6>
                                                                         <p class="font-xxs">Since <%= rating.postedBy.since %></p>
                                                                     </div>
@@ -280,14 +277,19 @@
                                                             <div class="product-img product-img-zoom">
                                                                 <a href="/user/aProducts?id=<%= relatedPr[i].id %>" tabindex="0">
                                                                     <img class="default-img"
-                                                                        src="/admin/assets/imgs/cropedImages/<%= relatedPr[i].images[0] %>" alt="">
+                                                                        src="/admin/assets/imgs/cropedImages/<%= relatedPr[i].images[0] %>"
+                                                                        alt=""
+                                                                        style="width: 190px; height: 190px;">
                                                                     <img class="hover-img"
-                                                                        src="/admin/assets/imgs/cropedImages/<%= relatedPr[i].images[1] %>" alt="">
+                                                                        src="/admin/assets/imgs/cropedImages/<%= relatedPr[i].images[1] %>"
+                                                                        alt=""
+                                                                        style="width: 190px; height: 190px;">
                                                                 </a>
+                                                                
                                                             </div>
                                                             <div class="product-action-1">
    
-                                           <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="wishList('<%= relatedPr[i]._id %>')"><i class="fi-rs-heart"></i></a>
+                                           <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="addToWishlist('<%= relatedPr[i]._id %>')"><i class="fi-rs-heart"></i></a>
                                                                 
                                                             </div>
                                                             <div
@@ -371,30 +373,27 @@
 
 
      <script>
-        function wishList(id){
-           $.ajax({
-               url:`/api/user/addToList?id=${id}`,
-               method:"get",
-               success:(response)=>{
-                   if(response.status){
-                      
-                   }else{
-                       Swal.fire({
-           title: 'ALREADY SELECTED!',
-           text: 'You already selected',
-           icon: 'error',
-           timer: 3000,
-         
-       
-         })
-                   }
-       
-               }
-           })
-       
-       
-       
+    function addToWishlist(id) {
+    console.log(id, 'id');
+
+    // Send AJAX request to add to wishlist
+    $.ajax({
+        url: `/addToWishlist?id=${id}`,
+        method: "post",
+        success: (response) => {
+            console.log('Successfully added to wishlist');
+
+            // Display success SweetAlert
+            Swal.fire({
+                title: "Success",
+                text: "Item added to wishlist successfully!",
+                icon: "success",
+            });
+
+            // You can add additional handling or redirect here
         }
+    });
+}
        
            </script>
            <script>
@@ -424,39 +423,5 @@
               });
             }
           </script>
-           <script>
-            function wishList(id){
-               $.ajax({
-                   url:`/api/user/addToList?id=${id}`,
-                   method:"get",
-                   success:(response)=>{
-                       if(response.status){
-                        Swal.fire({
-               title: 'ADDED TO WISHLIST',
-               text: 'You seleted a Product to the wisslist',
-               icon: 'success',
-               timer: 3000,
-             
-           
-             })
-                          
-                       }else{
-                           Swal.fire({
-               title: 'ALREADY SELECTED!',
-               text: 'You already selected',
-               icon: 'error',
-               timer: 3000,
-             
-           
-             })
-                       }
-           
-                   }
-               })
-           
-           
-           
-            }
-           
-               </script>
+         
     <%- include('footer') %>

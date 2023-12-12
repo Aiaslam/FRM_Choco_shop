@@ -21,21 +21,9 @@
                 </div>
                 <div class="mobile-menu-wrap mobile-header-border">
                     <div class="main-categori-wrap mobile-header-border">
-                        <a class="categori-button-active-2" href="#">
-                            <span class="fi-rs-apps"></span> Browse Categories
-                        </a>
+                        
                         <div class="categori-dropdown-wrap categori-dropdown-active-small">
-                            <ul>
-                                <li><a href="shop-grid-right.html"><i class="evara-font-dress"></i>Women's Clothing</a></li>
-                                <li><a href="shop-grid-right.html"><i class="evara-font-tshirt"></i>Men's Clothing</a></li>
-                                <li> <a href="shop-grid-right.html"><i class="evara-font-smartphone"></i> Cellphones</a></li>
-                                <li><a href="shop-grid-right.html"><i class="evara-font-desktop"></i>Computer & Office</a></li>
-                                <li><a href="shop-grid-right.html"><i class="evara-font-cpu"></i>Consumer Electronics</a></li>
-                                <li><a href="shop-grid-right.html"><i class="evara-font-home"></i>Home & Garden</a></li>
-                                <li><a href="shop-grid-right.html"><i class="evara-font-high-heels"></i>Shoes</a></li>
-                                <li><a href="shop-grid-right.html"><i class="evara-font-teddy-bear"></i>Mother & Kids</a></li>
-                                <li><a href="shop-grid-right.html"><i class="evara-font-kite"></i>Outdoor fun</a></li>
-                            </ul>
+                           
                         </div>
                     </div>
                     <!-- mobile menu start -->
@@ -44,9 +32,7 @@
                             <li class="menu-item-has-children"><span class="menu-expand"></span><a href="index.html">Home</a>
                                 <ul class="dropdown">
                                     <li><a href="index.html">Home 1</a></li>
-                                    <li><a href="index-2.html">Home 2</a></li>
-                                    <li><a href="index-3.html">Home 3</a></li>
-                                    <li><a href="index-4.html">Home 4</a></li>
+                                   
                                 </ul>
                             </li>
                             <li class="menu-item-has-children"><span class="menu-expand"></span><a href="shop-grid-right.html">shop</a>
@@ -73,28 +59,13 @@
                             <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Mega menu</a>
                                 <ul class="dropdown">
                                     <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Women's Fashion</a>
-                                        <ul class="dropdown">
-                                            <li><a href="shop-product-right.html">Dresses</a></li>
-                                            <li><a href="shop-product-right.html">Blouses & Shirts</a></li>
-                                            <li><a href="shop-product-right.html">Hoodies & Sweatshirts</a></li>
-                                            <li><a href="shop-product-right.html">Women's Sets</a></li>
-                                        </ul>
+                                        
                                     </li>
                                     <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Men's Fashion</a>
-                                        <ul class="dropdown">
-                                            <li><a href="shop-product-right.html">Jackets</a></li>
-                                            <li><a href="shop-product-right.html">Casual Faux Leather</a></li>
-                                            <li><a href="shop-product-right.html">Genuine Leather</a></li>
-                                        </ul>
+                                        
                                     </li>
                                     <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Technology</a>
-                                        <ul class="dropdown">
-                                            <li><a href="shop-product-right.html">Gaming Laptops</a></li>
-                                            <li><a href="shop-product-right.html">Ultraslim Laptops</a></li>
-                                            <li><a href="shop-product-right.html">Tablets</a></li>
-                                            <li><a href="shop-product-right.html">Laptop Accessories</a></li>
-                                            <li><a href="shop-product-right.html">Tablet Accessories</a></li>
-                                        </ul>
+                                        
                                     </li>
                                 </ul>
                             </li>
@@ -126,12 +97,7 @@
                                 </ul>
                             </li>
                             <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Language</a>
-                                <ul class="dropdown">
-                                    <li><a href="#">English</a></li>
-                                    <li><a href="#">French</a></li>
-                                    <li><a href="#">German</a></li>
-                                    <li><a href="#">Spanish</a></li>
-                                </ul>
+                              
                             </li>
                         </ul>
                     </nav>
@@ -170,23 +136,23 @@
         </div>
         <section class="mt-50 mb-50">
             <div class="container">
+                <div class="search-style-2">
+                    <form action="/filterSearch" method="post">
+                        
+                        <input type="text" name="search" placeholder="Search for items...">
+                       
+                        <button class="btn btn-sm" type="submit">Search</button>
+                    </form>
+                </div>
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="shop-product-fillter">
                             <div class="totall-product">
-                                <div class="search-style-2">
-                                    <form action="/filterSearch" method="post">
-                                        
-                                        <input type="text" name="search" placeholder="Search for items...">
-                                       
-                                        <button class="btn btn-sm" type="submit">Search</button>
-                                    </form>
-                                </div>
                                 <!-- <p> We found <strong class="text-brand">688</strong> items for you!</p> -->
                             </div>
                             <div class="sort-by-product-area">
                                 <div class="sort-by-cover mr-10">
-                                    
+                                   
                                     <div class="sort-by-product-wrap">
                                         <div class="sort-by">
                                             <span><i class="fi-rs-apps"></i>Show:</span>
@@ -235,20 +201,22 @@
                                     <% products.forEach((product) => { %>
                                         <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                                             
-                                            <a href="user/aProducts?id=<%= product.id %>">
+                                            <a href="user/aProducts?id=<%= product._id %>">
                                                 <div class="product-cart-wrap mb-30">
                                                     <div class="product-img-action-wrap">
                                                         <div class="product-img product-img-zoom">
-                                                            <a href="user/aProducts?id=<%= product.id %>">
-                                                                <img class="default-img" src="/admin/assets/imgs/cropedImages/<%= product.images[0] %>" alt="" style="width: 400px; height: 300px;">>
-                                                                <img class="hover-img" src="/admin/assets/imgs/cropedImages/<%= product.images[2] %>" alt="" style="width: 400px; height: 300px;">>
+                                                            <a href="user/aProducts?id=<%= product._id %>">
+                                                                <img class="default-img" src="/admin/assets/imgs/cropedImages/<%= product.images[0] %>" alt="" style="width: 400px; height: 300px;">
+                                                                <img class="hover-img" src="/admin/assets/imgs/cropedImages/<%= product.images[2] %>" alt="" style="width: 400px; height: 300px;">
                                                              </a>
                                                         </div>
                                                         <div class="product-action-1">
+                                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
                                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"onclick="addToWishlist('<%= product._id %>')" ><i class="fi-rs-heart"></i></a>
+                                                            <a aria-label="Compare" class="action-btn hover-up" href="#"><i class="fi-rs-shuffle"></i></a>
                                                         </div>
                                                         <div class="product-badges product-badges-position product-badges-mrg">
-                                                            <span class="hot">Hot</span>
+                                                           
                                                         </div>
                                                     </div>
                                                     <div class="product-content-wrap">
@@ -260,10 +228,10 @@
                                                             <span></span>
                                                         </div>
                                                         <div class="product-price">
-                                                            <span>$<%= product.price %></span>
+                                                            <span>₹<%= product.price %></span>
                                                             <span class="old-price">₹<%= Math.round(product.price + 50) %></span>
                                                             <!-- <a href="/addToCart?id=<%= product.id %>" class="float-right"><i class="fi-rs-shopping-bag-add "></i></a> -->
-                                                            <a class="float-right" onclick="addToCart('<%= product.id %>')" ><i class="fi-rs-shopping-bag-add "></i></a>
+                                                            <a class="float-right" onclick="addToCart('<%= product._id %>')" ><i class="fi-rs-shopping-bag-add "></i></a>
                                                             
                                                         </div>
                                                         <div></div>
@@ -272,6 +240,7 @@
                                             </a>
                                         </div>
                                     <% }); %>
+                                    
                                 <% } else { %>
                                     <tr>
                                         <td colspan="2">Product not found</td>
@@ -284,44 +253,128 @@
                         <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination justify-content-start">
-                                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                            <a class="page-link" href="/shop?page=<%= i %>"><%= i %></a>
+                                        </li>
+                                    <% } %>
                                     <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">16</a></li>
-                                    <li class="page-item"><a class="page-link" href="#"><i class="fi-rs-angle-double-small-right"></i></a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/shop?page=<%= totalPages %>">
+                                            <i class="fi-rs-angle-double-small-right"></i>
+                                        </a>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>
+                        
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
+
+    
     <script>
-        function addToWishlist(id) {
-        console.log(id, 'id');
+        function addTocart(id) {
+            console.log('Product ID:', id);
+            console.log('Request URL:', `/addToCart?id=${id}`);
+            
+            $.ajax({
+                url: `/addToCart?id=${id}`,
+                method: "get",
+                success: (response) => {
+                    if (response.status) {
+                        Swal.fire({
+                            title: 'ADD TO CART',
+                            text: 'Product Added to cart',
+                            icon: 'success',
+                            timer: 1000,
+                            showConfirmButton: false, // This removes the button
+                        });
+                    } else {
+                        alert('error');
+                    }
+                }
+            });
+        }
+     
+        function addToCart(id) {
+            console.log('Product ID:', id);
+            $.ajax({
+                
+                url: `/addToCart?id=${id}`,
+                
+                method: "get",
+                success: (response) => {
+                    if (response.status) {
+                        if (response.inCart) {
+                            // Product already in cart, increment the quantity
+                            Swal.fire({
+                                title: 'ADD TO CART',
+                                text: 'Product quantity incremented in cart',
+                                icon: 'success',
+                                timer: 1000,
+                                showConfirmButton: false, // This removes the button
+                            });
+                        } else {
+                            // Product added to cart
+                            Swal.fire({
+                                title: 'ADD TO CART',
+                                text: 'Product Added to cart',
+                                icon: 'success',
+                                timer: 1000,
+                                showConfirmButton: false, // This removes the button
+                            });
+                        }
+                    } else {
+                        alert('error');
+                    }
+                }
+            });
+        }
+     </script>
+     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const clickableCards = document.querySelectorAll('.clickable-card');
     
-        // Send AJAX request to add to wishlist
-        $.ajax({
-            url: `/addToWishlist?id=${id}`,
-            method: "post",
-            success: (response) => {
-                console.log('Successfully added to wishlist');
-    
-                // Display success SweetAlert
-                Swal.fire({
-                    title: "Success",
-                    text: "Item added to wishlist successfully!",
-                    icon: "success",
+            clickableCards.forEach(function (card) {
+                card.addEventListener('click', function () {
+                    const url = card.getAttribute('data-url');
+                    if (url) {
+                        window.location.href = url;
+                    }
                 });
-    
-                // You can add additional handling or redirect here
-            }
+            });
         });
-    }
-           
-               </script>
+    </script>
+    <script>
+      
+       function addToWishlist(id) {
+    console.log(id, 'id');
+
+    // Send AJAX request to add to wishlist
+    $.ajax({
+        url: `/addToWishlist?id=${id}`,
+        method: "post",
+        success: (response) => {
+            console.log('Successfully added to wishlist');
+
+            // Display success SweetAlert
+            Swal.fire({
+                title: "Success",
+                text: "Item added to wishlist successfully!",
+                icon: "success",
+            });
+
+            // You can add additional handling or redirect here
+        }
+    });
+}
+
+
+    </script>
+    
     <%- include('footer') %>
  

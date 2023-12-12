@@ -153,6 +153,11 @@ userRouter.get('/editProfile', auth.isLogged, userController.editProfile)
 
 userRouter.post('/updateUser', auth.isLogged, userController.updateUser)
 
+// shop
+userRouter.get('/shop',userController.shop)
+
+
+
 //ad adress
 
 userRouter.get('/addAddress', auth.isLogged, userController.addAddress)
@@ -246,7 +251,7 @@ userRouter.post('/validateCoupon',auth.isLogged,validateCoupon)
 //------wallet--------------
 userRouter.post('/addMoneyWallet',auth.isLogged,addMoneyWallet)
 userRouter.post('/updateMongoWallet',auth.isLogged,updateMongoWallet)
-userRouter.post('/useWallet',auth.isLogged,sumWallet)
+userRouter.get('/sumWallet',auth.isLogged,sumWallet)
 userRouter.get('/sumWalletBuynow',auth.isLogged,sumWalletBuynow)
 userRouter.post('/useWallet',auth.isLogged,useWallet)
 //------------------=-------------

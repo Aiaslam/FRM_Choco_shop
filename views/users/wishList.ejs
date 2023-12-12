@@ -77,9 +77,18 @@
                         </div>
                     </div>
                 </div>
+               
+                
             </div>
         </section>
     </main>
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     <script>
         function addToCart(id) {
     $.ajax({
@@ -128,21 +137,34 @@
 }
 
 
-        function itemDelete(id){
-            alert('enter to item delete')
-            console.log(id,'id to delete');
+function itemDelete(id) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this item!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    })
+    .then((willDelete) => {
+        if (willDelete) {
+            // User clicked "Yes"
+            console.log(id, 'id to delete');
             $.ajax({
-                url:`/dltItemWshlst?id=${id}`,
-                method:'post',
-                 
-                success: function(response){
-      alert('yes it out side the success')
-      if(response.status){
-        location.reload()
-      }
-    }
-            })
+                url: `/dltItemWshlst?id=${id}`,
+                method: 'post',
+                success: function (response) {
+                    if (response.status) {
+                        location.reload();
+                    }
+                }
+            });
+        } else {
+            // User clicked "No" or closed the alert
+            console.log('Deletion canceled');
         }
+    });
+}
+
     </script>
     
     <%- include('footer') %>

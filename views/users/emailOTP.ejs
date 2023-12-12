@@ -1,60 +1,129 @@
-<%- include('header') %>
+<!DOCTYPE HTML>
+<html lang="en">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/admin/assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/admin/assets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
 
-<div class="container">
-    <br>
-    <br>
-    <br>
+<body>
+    <main>
+        <header class="main-header style-2 navbar">
+            <div class="col-brand">
+                <a href="index.html" class="brand-wrap">
+                    <img src="/admin/assets/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
+                </a>
+            </div>
+            <div class="col-nav">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/admin/assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/admin/assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/admin/assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/admin/assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/admin/assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
 
-    <div class="row text-center">
+    <div class="container">
         <br>
         <br>
         <br>
-        <h4 class="">Verify OTP</h4>
-        <br>
-        <br>
-    </div>
 
-    <div class="row mt-5 justify-content-center">
-        <div class="col-lg-6">
-            <div class="container height-100 d-flex justify-content-center align-items-center">
-                <div class="position-relative">
-                    <div class="card p-2 text-center">
-                        <h6>Please enter the one-time password <br><br> to verify your account</h6>
-                        <br>
-                        <div> <span>A code has been sent to your e-mail id</span> </div>
-                        <br>
+        <div class="row text-center">
+            <br>
+            <br>
+            <br>
+            <h4 class="">Verify OTP</h4>
+            <br>
+            <br>
+        </div>
 
-                        <form id="otpForm" action="/verify" method="post">
-                            <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
-                                <input type="text" id="otpInput" name="otp" placeholder="Enter OTP" required>
-                            </div>
-                            <div id="errorMessage" style="color: red; display: none;">
-                                 
-                            </div>
+        <div class="row mt-5 justify-content-center">
+            <div class="col-lg-6">
+                <div class="container height-100 d-flex justify-content-center align-items-center">
+                    <div class="position-relative">
+                        <div class="card p-2 text-center">
+                            <h6>Please enter the one-time password <br><br> to verify your account</h6>
                             <br>
-                            <div class="mt-4">
-                                <div>
-                                    <p id="timer">Time remaining: 1:00</p>
-                                    <p id="resendMessage"></p>
+                            <div> <span>A code has been sent to your e-mail id</span> </div>
+                            <br>
+
+                            <form id="otpForm" action="/verify" method="post" onsubmit="return submitForm(event)">
+                                <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
+                                    <input type="text" id="otpInput" name="otp" placeholder="Enter OTP" required>
                                 </div>
-                                <a onclick="startResendTimer()" href="/Resendotp" id="resendButton" style="display: none;">Resend OTP</a>
-                                <button type="submit" class="btn btn-primary px-4 validate" id="submitButton">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <!-- Bootstrap Modal -->
-                    <div class="modal fade" id="otpExpiredModal" tabindex="-1" aria-labelledby="otpExpiredModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="otpExpiredModalLabel">OTP Expired</h5>
+                                <div id="errorMessage" style="color: red; display: none;">
+
                                 </div>
-                                <div class="modal-body">
-                                    Your OTP has expired. Click the button to resend OTP.
+                                <br>
+                                <div class="mt-4">
+                                    <div>
+                                        <p id="timer">Time remaining: 1:00</p>
+                                        <p id="resendMessage"></p>
+                                    </div>
+                                    <a onclick="startResendTimer()" href="/Resendotp" id="resendButton"
+                                        style="display: none;">Resend OTP</a>
+                                    <button type="submit" class="btn btn-primary px-4 validate"
+                                        id="submitButton">Submit</button>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" onclick="startResendTimer()" class="btn btn-primary" id="resendButtonModal">Resend OTP</button>
+                            </form>
+                        </div>
+
+                        <!-- Bootstrap Modal -->
+                        <div class="modal fade" id="otpExpiredModal" tabindex="-1"
+                            aria-labelledby="otpExpiredModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="otpExpiredModalLabel">OTP Expired</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        Your OTP has expired. Click the button to resend OTP.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" onclick="startTimer()" class="btn btn-primary"
+                                            id="resendButtonModal">Resend OTP</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -62,139 +131,146 @@
                 </div>
             </div>
         </div>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
     </div>
+    <footer class="main-footer text-center">
+        <p class="font-xs">
+            <script>
+            document.write(new Date().getFullYear())
+            </script> ©, Evara .
+        </p>
+        <p class="font-xs mb-30">All rights reserved</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  
     <script>
         var countdown;
-        var resendCount = 0;
-        var resendButton = document.getElementById('resendButton');
-        var resendLink = document.getElementById('resendLink');
+        var resendButton = $('#resendButtonModal'); // Cache the button element
 
-        // Start the timer on page load
         startTimer();
 
         function startTimer() {
-            // Set the initial time to 60 seconds
             var time = 60;
 
-            // Display the initial time
             displayTime(time);
 
-            // Start the countdown
             countdown = setInterval(function () {
                 time--;
                 displayTime(time);
 
-                // If the timer reaches 0, enable the "Resend OTP" button and show the message
                 if (time <= 0) {
-                    alert('hai')
                     clearInterval(countdown);
-                    // resendButton.style.display = 'block';
-                    // document.getElementById('resendMessage').innerText = 'You can now resend OTP.';
                     $('#otpExpiredModal').modal('show');
+                    resendButton.css('display', 'block');
 
-// Handle resend button click inside the modal
-$('#resendButtonModal').on('click', function () {
-  // Add your logic to resend OTP here
-     $.ajax({
-        method:'get',
-        url:"/Resendotp",
-        success:(responce)=>{
-             if(responce.status){
-              alert('successs resend otp')
-                   }
-                           
-                }
-
-     })
-  
-
-  // You may want to close the modal after resending
-  $('#otpExpiredModal').modal('hide');
-});
-                    $.ajax({
-                        method:'get',
-                        url:"/expiryOTP",
-
-                        success:(responce)=>{
-                            if(responce.status){
-                             alert('successs')
+                    resendButton.on('click', function () {
+                        $.ajax({
+                            method: 'get',
+                            url: "/Resendotp",
+                            success: function (response) {
+                                if (response.status) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: 'OTP has been resent successfully.'
+                                    });
+                                    startTimer();
+                                } 
+                            },
+                            error: function (error) {
+                                console.error(error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops!',
+                                    text: 'Failed to resend OTP. Please try again.'
+                                });
                             }
-                           
+                        });
+
+                        $('#otpExpiredModal').modal('hide');
+                    });
+
+                    // Notify the server about OTP expiry
+                    $.ajax({
+                        method: 'get',
+                        url: "/expiryOTP",
+                        success: function (response) {
+                            if (response.status) {
+                                console.log('Success notifying OTP expiry.');
+                            } else {
+                                console.error('Failed to notify OTP expiry.');
+                            }
                         }
-                    })
+                    });
                 }
             }, 1000);
-        }
-
-        function startResendTimer() {
-            // Hide the "Resend OTP" button until the resend limit is reached
-            resendButton.style.display = 'none';
-
-            // Reset the timer
-            clearInterval(countdown);
-            document.getElementById('resendMessage').innerText = '';
-
-            // Start the timer again
-            startTimer();
-
-            // Increment the resend count
-            resendCount++;
-
-            // Show the "Resend OTP" button after the resend limit is reached
-            if (resendCount < 3) {
-                resendLink.style.display = 'block';
-            } else {
-                resendLink.style.display = 'none';
-                document.getElementById('resendMessage').innerText = 'Resend limit reached.';
-                resendCount = 0; // Reset resend count after the third attempt
-            }
-        }
-
-        function validateForm() {
-            // Add your OTP validation logic here
-
-            // Example: Check if each OTP input is a number
-            var otpInputs = document.querySelectorAll('.inputs input');
-            for (var i = 0; i < otpInputs.length; i++) {
-                if (isNaN(otpInputs[i].value)) {
-                    alert('Please enter a valid OTP.');
-                    return false;
-                }
-            }
-
-            // Additional validation rules can be added as needed
-
-            return true;
         }
 
         function displayTime(seconds) {
             var minutes = Math.floor(seconds / 60);
             var remainingSeconds = seconds % 60;
 
-            // Add leading zero if seconds are less than 10
             remainingSeconds = remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds;
 
-            document.getElementById('timer').innerText = 'Time remaining: ' + minutes + ':' + remainingSeconds;
+            $('#timer').text('Time remaining: ' + minutes + ':' + remainingSeconds);
+        }
+
+        function submitForm() {
+            var formData = $('#otpForm').serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/verify',
+                data: formData,
+                success: function (response) {
+                    handleFormResponse(response);
+                },
+                error: function (error) {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+
+            return false;
+        }
+
+        function handleFormResponse(response) {
+            if (response.status) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Account verification successful.'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/home';
+                    }
+                });
+             } 
+            // else {
+            //     Swal.fire({
+            //         icon: 'error',
+            //         title: 'Oops!',
+            //         text: response.error || 'Account verification failed. Please try again.'
+            //     });
+            // }
         }
     </script>
+</body>
 
+</html>
+    
     <!-- Include Bootstrap JS and Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <%- include('footer') %>
+    
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

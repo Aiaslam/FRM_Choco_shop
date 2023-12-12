@@ -5,30 +5,42 @@ const Oder = require('../models/orderModel')
 const asyncHandler = require('express-async-handler');
 const { log } = require('console');
 
-const addToWishList=asyncHandler(async(req,res)=>{
-    try{
-        const id = req.query.id
-        console.log(id,'this is the the product Id to add to wishlist');
-        const user= req.session.user
-        console.log(user,'this the usesr id in the sesson ');
-        const userData = await User.findById(user)
-        if(userData){
-            console.log(userData,'userData');
-        userData.wishlist.push({
-            ProductId:id
-        })
-        console.log(userData.wishlist,'userData.wishlist before saving');
-        userData.save()
-        console.log(userData.wishlist,'userData.wishlist after saving');
-        }else{
-            console.log('user data not found');
-        }
-        
+const addToWishList = asyncHandler(async (req, res) => {
+    try {
+        const id = req.query.id;
+        console.log(id, 'this is the product Id to add to wishlist');
+        const user = req.session.user;
+        console.log(user, 'this is the user id in the session');
+        const userData = await User.findById(user);
 
-    }catch(error){
+        if (userData) {
+            console.log(userData, 'userData');
+
+            // Check if the product already exists in the wishlist
+            const isProductInWishlist = userData.wishlist.some(item => item.ProductId === id);
+
+            if (!isProductInWishlist) {
+                userData.wishlist.push({
+                    ProductId: id,
+                });
+
+                console.log(userData.wishlist, 'userData.wishlist before saving');
+                await userData.save();
+                console.log(userData.wishlist, 'userData.wishlist after saving');
+
+                res.json({ success: true, message: 'Product added to wishlist successfully' });
+            } else {
+                res.json({ success: false, message: 'Product is already in the wishlist' });
+            }
+        } else {
+            console.log('user data not found');
+            res.status(404).json({ success: false, message: 'User not found' });
+        }
+    } catch (error) {
         console.log(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
-})
+});
 
 const displayWishlist =asyncHandler(async(req,res)=>{
 try{

@@ -24,7 +24,7 @@
     "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
     "mongodb": "^6.3.0",
-    "mongoose": "^8.0.1",
+    "mongoose": "^8.0.3",
     "mongoose-paginate": "^5.0.3",
     "mongoose-paginate-v2": "^1.7.4",
     "morgan": "^1.10.0",
@@ -40,3 +40,4 @@
     "twilio": "^3.40.0"
   }
 }
+  

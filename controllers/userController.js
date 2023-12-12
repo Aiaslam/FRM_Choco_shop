@@ -4,12 +4,28 @@ const product = require('../models/productModel');
 const catogary = require('../models/catogaryModel')
 const Oder = require('../models/orderModel')
 const asyncHandler = require('express-async-handler');
-const twilio = require('twilio');
+
 const Swal = require('sweetalert2');
 const { logout } = require('./adminController');
 const Banner= require('../models/bannerModel')
 
+const bcrypt = require("bcrypt");
 const otpStore = {}; // In-memory store for simplicity
+
+
+
+
+
+//--------------hasinthe password------------------
+
+const generateHashedPassword = async (password) => {
+   const saltRounds = 10; // Number of salt rounds
+   const salt = await bcrypt.genSalt(saltRounds);
+   const hashedPassword = await bcrypt.hash(password, salt);
+   return hashedPassword;
+ };
+//----------------------------------
+
 
 //genarte a otp--------------------------------  
 function generateotp() {
@@ -167,10 +183,12 @@ const forgetPassward = asyncHandler(async (req, res) => {
       console.log(error);
    }
 })
+
 const forgotpaswrdEmailValidate = asyncHandler(async (req, res) => {
    try {
       console.log('forgotpaswrdEmailValidate');
       const { email } = req.body;
+      console.log(email);
       const userData = await User.find({ email });
       console.log(userData);
 
@@ -195,13 +213,13 @@ const forgotpaswrdEmailValidate = asyncHandler(async (req, res) => {
 
                // Optionally, you can check OTP expiration before processing entered OTP
                console.log('now it is going to check if (Date.now() > req.session.otpExpirationTime)');
-               if (Date.now() >= req.session.otpExpirationTime) {
-                  console.log('inside if (Date.now() > req.session.otpExpirationTime)');
-                  console.log("OTP has expired for", user.username);
-                  req.session.frgtOTP = undefined;
-                  console.log('now this is what inside req.session.frgtOTP', req.session.frgtOTP);
-                  console.log("OTP has expired for", user.username);
-               }
+               // if (Date.now() >= req.session.otpExpirationTime) {
+               //    console.log('inside if (Date.now() > req.session.otpExpirationTime)');
+               //    console.log("OTP has expired for", user.username);
+               //    req.session.frgtOTP = undefined;
+               //    console.log('now this is what inside req.session.frgtOTP', req.session.frgtOTP);
+               //    console.log("OTP has expired for", user.username);
+               // }
             } else {
                console.log('Invalid user data:', user);
                // Display SweetAlert for invalid user
@@ -237,6 +255,7 @@ const forgotpaswrdEmailValidate = asyncHandler(async (req, res) => {
 
 const resendOtp = asyncHandler(async (req, res) => {
    try {
+      console.log('Entered to resend OTP???????????????????????/////////////////////////////');
       console.log(req.session.email, 'req.session.email');
       const email = req.session.email
       const username = req.session.username
@@ -251,14 +270,8 @@ const resendOtp = asyncHandler(async (req, res) => {
 
       const response = await sendVerifyMail(username, email);
       req.session.OTP = Number(response);
-      const otpExpiryTime = 1 * 60 * 1000;
-      setTimeout(() => {
-         req.session.OTP = undefined
-         // req.session.OTP= undefined
-         // You can handle OTP expiration here, e.g., clear the OTP or take appropriate action
-         console.log('now this is what inside req.session.OTP', req.session.OTP);
-         console.log("OTP has expired for", username);
-      }, otpExpiryTime);
+      
+      
       // const otpExpirationTime = 60 * 100; // 60 seconds * 1000 milliseconds
       //  const otpExpirationPromise = new Promise((resolve) => {
       //               setTimeout(() => {
@@ -268,7 +281,7 @@ const resendOtp = asyncHandler(async (req, res) => {
       //                  resolve();
       //               }, otpExpirationTime);
       //   });
-      // req.session.email = req.body.email;
+       req.session.email = req.body.email;
       console.log(req.session.OTP);
        const errorMessage=' '
       res.render('emailOTP',{ errorMessage: errorMessage });
@@ -288,7 +301,7 @@ const resendOtp = asyncHandler(async (req, res) => {
 
 const forgotpaswrdResend = asyncHandler(async (req, res) => {
    try {
-      const email = req.session.forgetPasswarduserEmail
+      const email = req.session.forgotEmail
       const userData = await User.find({ email });
       const username = req.session.username
 
@@ -317,9 +330,13 @@ const forgotpaswrdResend = asyncHandler(async (req, res) => {
             //                  resolve();
             //               }, otpExpirationTime);
             //   });
-            req.session.forgotEmail = req.body.email;
+            req.session.forgotEmail =req.body.email
             console.log(req.session.frgtOTP);
             res.render('forgotPasswrdOTP', { message: 'Registration successful, verify email', errMessage: '' });
+
+            req.session.frgtOTP=null
+
+            // res.json({status:true})
          }
       } else {
          // Handle the case when no user with the provided email is found.
@@ -360,25 +377,48 @@ const verifyOTPFrgt = asyncHandler(async (req, res) => {
 
 const updatePassword = asyncHandler(async (req, res) => {
    try {
-      const updatedPassword = req.body
-      forgotEmail = req.session.forgotEmail
-      const userData = User.findOneAndUpdate({ forgotEmail }, {
-         $set: {
-            password: updatedPassword
-         }
+      const updatedPassword = req.body.conformPassword;
+      console.log(updatedPassword);
 
-      })
-      if (userData) {
-         res.redirect('/login')
-      } else {
-         console.log('userData is not found or any error while updating password,userData:', userData);
+      const forgotEmail = req.session.forgotEmail.replace(/[^a-zA-Z0-9.@]/g, '') 
+
+console.log('Cleaned Forgot Email:', forgotEmail);
+
+// Use a case-insensitive query with $regex
+const existingUser = await User.findOne({ email: { $regex: new RegExp(forgotEmail, 'i') } });
+
+console.log('MongoDB Query:', existingUser?._conditions);
+
+console.log('Raw Forgot Email:', req.session.forgotEmail);
+
+
+      if (!existingUser) {
+         console.log('User not found with the specified forgotEmail:', forgotEmail);
+         return res.status(404).json({ message: 'User not found' });
       }
+      if(existingUser){
+         const hashedPassword = await generateHashedPassword(req.body.conformPassword);
 
+         console.log('before going to update everything is okay');
+      existingUser.password = hashedPassword;
+      const userData = await existingUser.save();
+      console.log(userData);
 
+      if (userData) {
+         res.redirect('/login');
+      } else {
+         console.log('Error while updating password, userData:', userData);
+         res.status(500).json({ message: 'Error while updating password' });
+      }
+      }
+      
    } catch (err) {
       console.log(err);
+      res.status(500).json({ message: 'Internal Server Error' });
    }
-})
+});
+
+
 
 // otp page
 
@@ -413,11 +453,14 @@ const loadLogin = async (req, res) => {
 const verfiyUser = async (req, res) => {
    try {
       const email = req.body.email;
+      console.log(email,'email inside verfyuser');
       const password = req.body.password;
+      console.log(password,'email inside password');
 
-      const userData = await User.findOne({ email: email });
+      const userData = await User.findOne({ email:email });
+      console.log(userData,'userData inside password');
       if (userData) {
-         if (userData.password == password) {
+         if ((await userData.isPasswordMatched(password))) {
             const productsData = await product.find({})
             req.session.user = userData._id
             // res.render('home', { user: userData ,products:productsData});
@@ -433,6 +476,43 @@ const verfiyUser = async (req, res) => {
       console.log(error.message)
    }
 }
+const shop = async (req, res) => {
+   try {
+      const user = req.session.user;
+      const userData = await User.findById(user);
+
+      // Pagination parameters
+      const page = parseInt(req.query.page) || 1; // Current page, default to 1
+      const limit = 10; // Number of products per page
+
+      // Calculate the skip value based on the current page and limit
+      const skip = (page - 1) * limit;
+
+      // MongoDB aggregation pipeline with pagination
+      const products = await product.aggregate([
+         {
+            $match: {
+               status: { $ne: false },
+               'category.status': { $ne: false },
+            },
+         },
+         { $skip: skip }, // Skip documents
+         { $limit: limit }, // Limit the number of documents
+      ]);
+
+      // Count all products to calculate total pages
+      const totalProducts = await product.countDocuments({
+         status: { $ne: false },
+         'category.status': { $ne: false },
+      });
+      const totalPages = Math.ceil(totalProducts / limit);
+
+      res.render('shop', { products: products, user: userData, totalPages, currentPage: page });
+   } catch (error) {
+      console.log(error);
+   }
+};
+
 const loadHome = async (req, res) => {
    try {
       console.log('load home');
@@ -441,11 +521,17 @@ const loadHome = async (req, res) => {
       const limit = 9; // Number of products per page
 
       if (user) {
-         const category = await catogary.find();
+         // const category = await catogary.find();
          const userData = await User.findById(user);
          const banner = await Banner.find()
          console.log(banner,'banner');
-
+         const category = await catogary.aggregate([
+            {
+               $match: {
+                  status: { $ne: false }
+               }
+            }
+         ]);
          const products = await product.aggregate([
             {
                $match: {
@@ -537,10 +623,12 @@ const verifyMail = async (req, res) => {
          console.log('otp equelto checking is working at line 273')
          const userData = req.session.userData
 
+         const hashedPassword = await generateHashedPassword(userData.password);
+
          const saveUserData = new User({
             username: userData.username,
             email: userData.email,
-            password: userData.password,
+            password: hashedPassword,
             mobile: userData.phone
          })
          const savedUserData = await saveUserData.save()
@@ -549,18 +637,18 @@ const verifyMail = async (req, res) => {
          if (savedUserData) {
             const productsData = await product.find({})
          
-            res.redirect('/home')
+            res.status(200).json({ status: true, message: "User registered successfully!" });
          } else {
             // Handle the case where the update didn't modify any documents
-            return res.status(500).json({ error: "User not found or update failed." });
+            return res.status(500).json({ status: false, error: "User not found or update failed." });
          }
       } else {
          // Handle the case where the entered OTP is incorrect
-         
+         return res.status(400).json({ status: false, error: "Incorrect OTP. Please try again." });
       }  
    } catch (error) {
       console.error(error.message);
-      return res.status(500).json({ error: "An error occurred while verifying OTP." });
+      return res.status(500).json({ status: false, error: "An error occurred while verifying OTP." });
    }
 }
 const aProducts = async (req, res) => {
@@ -701,8 +789,12 @@ const updateUser = async (req, res) => {
 const getchangePassword = asyncHandler(async (req, res) => {
    try {
       const id = req.session.user
+
+      console.log(id,'id of get change password ');
       const userData = await User.findById(id)
-      res.render('changePassword', { user: userData })
+
+      console.log(userData,'userData in getchangePassword');
+      res.render('changePassword', { user:userData })
 
 
    } catch (err) {
@@ -714,20 +806,38 @@ const getchangePassword = asyncHandler(async (req, res) => {
 
 const changePassword = asyncHandler(async (req, res) => {
    try {
+    
       const { username, currentPassword, newPassword, confirmPassword } = req.body;
+  
+      const currentPasswordH = await generateHashedPassword(currentPassword);
+
+      const newPasswordH = await generateHashedPassword(newPassword);
+
+      const confirmPasswordH = await generateHashedPassword(confirmPassword);
+
       console.log(username, currentPassword, newPassword, confirmPassword, 'username, currentPassword, newPassword ,confirmPassword');
       console.log(username, 'username');
+      console.log( currentPasswordH, newPasswordH, confirmPasswordH, ' currentPasswordH, newPasswordH ,confirmPasswordH');
+
+
       const id = req.body.userId
       console.log(id);
       const user = await User.findById(id);
       console.log(user);
+        console.log(user.password,'user.password');
 
-      if (user.password == currentPassword) {
+        console.log(currentPasswordH,'currentPasswordH');
+      if ((await user.isPasswordMatched(currentPassword))) {
+
+         console.log('inside the user.password == currentPasswordH');
 
          if (newPassword == confirmPassword) {
-            user.password = newPassword;
-            await user.save();
 
+            console.log('inside the newPasswordH == confirmPasswordH');
+            user.password = newPasswordH;
+            console.log('going to user.save()');
+            await user.save();
+             console.log(user,'user after saving and next is redirect');
             res.redirect('/userAbout');
          } else {
             const errMessage = 'check the conformPassword'
@@ -735,6 +845,10 @@ const changePassword = asyncHandler(async (req, res) => {
          }
 
       } else {
+         console.log('entered password is wrong check it ');
+
+         res.redirect('/changePassword',{errMessage})
+         
          const errMessage = 'Enter the correct current password '
       }
 
@@ -749,8 +863,12 @@ const changePassword = asyncHandler(async (req, res) => {
 
 // add Address---------------------------------------------------
 const addAddress = asyncHandler(async (req, res) => {
+
    try {
-      res.render('addAddress')
+      const user =req.session.user
+      console.log(user,'req.session.user');
+      const userData= await User.findById(user)
+      res.render('addAddress',{user:userData})
    } catch (error) {
       console.log(error);
    }
@@ -962,6 +1080,7 @@ module.exports = {
    addAddresscheck,
    otpCheck,
    otpPage,
-   expiryfrgtOTP
+   expiryfrgtOTP,
+   shop
 
 } 

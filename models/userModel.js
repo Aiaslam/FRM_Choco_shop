@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const mongoosePaginate = require('mongoose-paginate-v2');
 const addressSchema = new mongoose.Schema({
@@ -138,11 +139,10 @@ const userModel = new mongoose.Schema({
 
 })
 
-userModel.methods.comparePassword = function (candidatePassword) {
-    // Make sure to check if this.password exists before comparing
-    return this.password && candidatePassword === this.password;
+userModel.methods.isPasswordMatched = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
 };
-;
+
 userModel.plugin(mongoosePaginate);
 ;
 

@@ -1,7 +1,11 @@
 const mongoose=require('mongoose')
 
-mongoose.connect('mongodb://127.0.0.1:27017/ecommercedb')
-
+const mongoURI ='mongodb+srv://aliaslamnoushad:ANxtp1jbMSLVMt8J@frm.g0po99q.mongodb.net/?retryWrites=true&w=majority'
+mongoose.connect(mongoURI).then(() => {
+    console.log('Connected to MongoDB');
+}).catch((err) => {
+    console.error('Error connecting to MongoDB:', err);
+});
 const port= process.env.Port || 3000
 
 
