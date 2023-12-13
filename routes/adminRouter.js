@@ -4,7 +4,7 @@ const adminRouter = express();
 const nocache = require('nocache')
 const logger = require('morgan')
 const session = require('express-session');
-const config = require('../config/config');
+const config = require('../config/connectDb');
 const path = require('path');
 const sharp = require('sharp');
 
@@ -12,11 +12,11 @@ const sharp = require('sharp');
 adminRouter.use(express.static('public'))
 
 
-adminRouter.use(session({
-  secret: config.sessionSecretId,
-  resave: false,
-  saveUninitialized: false,
-}))
+// adminRouter.use(session({
+//   secret: config.sessionSecretId,
+//   resave: false,
+//   saveUninitialized: false,
+// }))
 
 //----------multer setting---------------
 const {

@@ -2,7 +2,7 @@
 const User = require('../models/userModel');
 const product = require('../models/productModel');
 const category = require('../models/catogaryModel')
-const config = require('../config/config');
+const config = require('../config/connectDb');
 const mongoose = require('mongoose');
 
 const asyncHandler = require('express-async-handler');

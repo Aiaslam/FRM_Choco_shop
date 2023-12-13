@@ -15,7 +15,7 @@ const uploadprd= require('../multer/multerproduct')
 
 const auth = require('../middleweare/user_authentication')
 const userController = require('../controllers/userController');
-const config = require('../config/config.js')
+const config = require('../config/connectDb.js')
 const {
   addToCart,
   displayCart,
@@ -88,12 +88,12 @@ const{
 
 userRouter.use(nocache());
 
-userRouter.use(session({
-  secret: config.sessionSecretId,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 3600000 }
-}))
+// userRouter.use(session({
+//   secret: config.sessionSecretId,
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: { maxAge: 3600000 }
+// }))
 
 userRouter.use(bodyParser.json());
 userRouter.use(bodyParser.urlencoded({ extended: true }));

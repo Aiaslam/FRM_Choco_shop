@@ -1,11 +1,9 @@
 const mongoose=require('mongoose')
+const session = require('express-session');
+const  {dbConnect} = require('./config/connectDb')
 
-const mongoURI ='mongodb+srv://aliaslamnoushad:ANxtp1jbMSLVMt8J@frm.g0po99q.mongodb.net/?retryWrites=true&w=majority'
-mongoose.connect(mongoURI).then(() => {
-    console.log('Connected to MongoDB');
-}).catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-});
+dbConnect()
+
 const port= process.env.Port || 3000
 
 
@@ -18,6 +16,25 @@ const app=express()
 app.use(express.static('public'))
 
 require('dotenv').config();
+
+
+const mongodbSession=require('connect-mongodb-session')(session)
+const store= new mongodbSession({
+    uri:process.env.MONGO_URL,
+    collection:"SessionDB",
+})
+
+app.use(session({
+    secret:process.env.SESSION_SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 72 * 60 * 60 * 1000, // Session expires in 72 hours
+      httpOnly: true,
+    },
+    store:store
+  })
+);
 //-------------user router----------------------
 
 const userRouter= require('./routes/userRouter')
