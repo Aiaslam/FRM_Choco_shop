@@ -9,7 +9,7 @@ const Swal = require('sweetalert2');
 const { logout } = require('./adminController');
 const Banner= require('../models/bannerModel')
 
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const otpStore = {}; // In-memory store for simplicity
 
 

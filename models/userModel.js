@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var bcrypt = require('bcryptjs');
+var bcrypt = require('bcrypt');
 
 const mongoosePaginate = require('mongoose-paginate-v2');
 const addressSchema = new mongoose.Schema({
