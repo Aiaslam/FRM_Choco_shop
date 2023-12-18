@@ -12,6 +12,7 @@ const dbConnect = async () => {
             useUnifiedTopology: true,
             ssl: true,
             tlsAllowInvalidCertificates: true,
+            
         });
         
         console.log('db connected');
