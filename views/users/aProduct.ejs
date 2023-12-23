@@ -8,30 +8,21 @@
 
 
 
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
 
 <!-- this is for zoom -->
-<style>
 
-
-
-
-
-
-
-</style>
 
 <!-- zoom style end  -->
 
     <main class="main">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
-                <div class="breadcrumb">
-                    <a href="/user" rel="nofollow">Home</a>
+                  <div class="breadcrumb">
+                    <a href="/home" rel="nofollow">Home</a>
                     <span></span> 
                     <span></span> 
                 </div>
@@ -46,24 +37,23 @@
                             <div class="row mb-50">
                                 <div class="col-md-6 col-sm-12 col-xs-12">
                                     <div class="detail-gallery">
-                                        <span class="zoom-icon" id="zoom-icon"><i class="fi-rs-search"></i></span>
+                                        <span class="zoom-icon"><i class="fi-rs-search"></i></span>
                                         <!-- MAIN SLIDES -->
-                                        <div class="product-image-slider">
-                                            <% for (let i=0; i < product.images.length; i++) { %>
-                                            <figure class="border-radius-10">
-                                                <img style="width: 475px; height: 500px;" src="/admin/assets/imgs/cropedImages/<%= product.images[i] %>" alt="product image">
+                                        <div class="product-image-slider" id="main-slider">
+                                            <% const mainImage = product.images[0]; %>
+                                            <figure class="border-radius-10 active">
+                                                <img style="width: 475px; height: 500px;" src="/admin/assets/imgs/cropedImages/<%= mainImage %>" alt="product image">
                                             </figure>
-                                            <% } %>
                                         </div>
                                         <!-- THUMBNAILS -->
-                                        <div class="slider-nav-thumbnails pl-15 pr-15">
-                                            <% for (let i=0; i < product.images.length; i++) { %>
-                                            <div>
-                                                <img style="height: 100px; width: 100px;" src="/admin/assets/imgs/cropedImages/<%= product.images[i] %>" alt="product image">
-                                            </div>
-                                            <% } %>
+                                        <div class="slider-nav-thumbnails pl-15 pr-15" id="thumbnail-slider">
+                                            <% product.images.slice(1).forEach((thumbnail) => { %>
+                                                <div><img src="/admin/assets/imgs/cropedImages/<%= thumbnail %>" alt="product image"></div>
+                                            <% }); %>
                                         </div>
                                     </div>
+                                    
+
                                     <!-- End Gallery -->
                                     <div class="social-icons single-share">
                                         <ul class="text-grey-5 d-inline-block">
@@ -132,7 +122,6 @@
                                             <br>
                                             <br>
                                              <div class=" ml-5"><a  onclick="addToCart('<%= product.id %>')" ><button type="submit"  class="button button-add-to-cart ">Add tocart</button></a></div>
-                                             <div class="col-lg-3"><a href="/user/buyNOw?id=<%= product.id %>"><button style="width: 100px; height: 40px;" type="submit" class="btn btn-sm button-add-to-cart">Buy Now</button></a></div>
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                            
@@ -171,8 +160,7 @@
                                             
                                             <h4 class="mt-30">Packaging & Delivery</h4>
                                             <hr class="wp-block-separator is-style-wide">
-                                            <!-- <p>PRADA's packaging and delivery solutions are a testament to our commitment to excellence. Our quality-driven approach ensures that your products are protected and delivered with care. From elegant packaging that enhances the unboxing experience to export-ready solutions that meet global standards, we take pride in providing the best. Trust Evara for quality, protection, and peace of mind with every delivery.
-                                            </p> -->
+                                           
                                            
                                         </div>
                                     </div>
@@ -381,6 +369,7 @@
         url: `/addToWishlist?id=${id}`,
         method: "post",
         success: (response) => {
+            if (response.status) {
             console.log('Successfully added to wishlist');
 
             // Display success SweetAlert
@@ -391,7 +380,17 @@
             });
 
             // You can add additional handling or redirect here
+        } else {
+                    Swal.fire({
+                      title: "oops",
+                      text: "Please login to continue",
+                      icon: "error",
+                      timer: 1000,
+                      showConfirmButton: false, // This removes the button
+                    });
+                  }
         }
+        
     });
 }
        

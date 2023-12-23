@@ -190,7 +190,7 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
+                    <a href="/home" rel="nofollow">Home</a>
                     <span></span> Pages
                     <span></span> Login / Register
                 </div>
@@ -224,6 +224,11 @@
                                                 <input  type="password" id="password" name="password" placeholder="Password">
                                                 <p id="passwordError" class="error-message"></p>
                                             </div>
+                                            <% if ( message ){%>
+                                                <div class="alert alert-danger text-center mt-5" role="alert">
+                                                    <%- message %>
+                                                </div>
+                                                <%}%>
                                             <div class="login_footer form-group">
                                                 <div class="chek-form">
                                                     <div class="custome-checkbox">

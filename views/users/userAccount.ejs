@@ -4,8 +4,8 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Pages
+                    <a href="/home" rel="nofollow">Home</a>
+                    
                     <span></span> Account
                 </div>
             </div>
@@ -29,6 +29,13 @@
                                                 role="tab" aria-controls="orders" aria-selected="false"><i
                                                     class="fi-rs-shopping-bag mr-10"></i>Orders</a>
                                         </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#coupons"
+                                                role="tab" aria-controls="orders" aria-selected="false"><i
+                                                    class="fi-rs-shopping-bag mr-10"></i>Coupons</a>
+                                        </li>
+
                                         <li class="nav-item">
                                             <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab"
                                                 href="#track-orders" role="tab" aria-controls="track-orders"
@@ -253,7 +260,7 @@
                                                                 <th>Status</th>
                                                                 <th>Total</th>
                                                                 <th>Actions</th>
-                                                                <th>cancel</th>
+                                                                
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -300,6 +307,38 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="tab-pane fade" id="coupons" role="tabpanel" aria-labelledby="orders-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Your coupons</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table">
+                                                        
+                                                        <tbody>
+                                                            <% if (coupon.length > 0) { %>
+                                                                <% for (let i = 0; i < coupon.length; i++) { %>
+                                                                    <tr>
+                                                                        <td><%= coupon[i].name %></td>
+                                                                        <td class="text-right">
+                                                                            <button class="btn btn-sm btn-copy" data-coupon-name="<%= coupon[i].name %>">Copy</button>
+                                                                        </td>
+                                                                    </tr>
+                                                                <% } %>
+                                                            <% } else { %>
+                                                                <tr>
+                                                                    <td colspan="2">No Coupon Available</td>
+                                                                </tr>
+                                                            <% } %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
                                         <div class="card">
                                             <div class="card-header">
@@ -317,13 +356,13 @@
                                                 </thead>
                                                 <tbody>
 
-                                                    <% for (let i=0; i < user.history.length;i++) { %>
+                                                    <% for (let i=1; i < user.history.length;i++) { %>
                                                         <tr>
                                                             <td><%=i%></td>
                                                             <td><%= new Date(user.history[i].timestamp).toLocaleDateString() %></td>
                                                           
                                                             <td><%= user.history[i].status %></td>
-                                                            <td>$<%= (user.history[i].amount ).toFixed(2)%> </td>
+                                                            <td><%= (user.history[i].amount ).toFixed(2)%> </td>
                                                             
                                                         </tr>
 
@@ -555,6 +594,33 @@
         </section>
     </main>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+         const copyButtons = document.querySelectorAll(".btn-copy");
+         copyButtons.forEach(copyButton => {
+             copyButton.addEventListener("click", function () {
+                 const couponName = this.getAttribute("data-coupon-name");
+                 copyToClipboard(couponName);
+                 updateCopyButton(this); // Update the clicked copy button's appearance
+             });
+         });
+     });
+     
+     function updateCopyButton(button) {
+         button.textContent = 'Copied';
+         button.disabled = true; 
+     }
+     
+     async function copyToClipboard(text) {
+         try {
+             await navigator.clipboard.writeText(text);
+             console.log('Text copied to clipboard:', text);
+         } catch (error) {
+             console.error("Failed to copy:", error);
+         }
+     }
+     </script>
+     
 
     <script>
         $(document).ready(function () {

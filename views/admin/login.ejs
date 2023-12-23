@@ -85,17 +85,12 @@
                             <input class="form-control" name="password"  id="password" placeholder="Password" type="password">
                              <p id="passwordError"></p>
                         </div> 
-                        <!-- <div class="form-group">
-                            <input  type="password" id="password" name="password" placeholder="Password">
-                            <p id="passwordError"></p>
-                        </div> -->
-                        <div class="mb-3">
-                            <!-- <a href="#" class="float-end font-sm text-muted">Forgot password?</a>
-                            <label class="form-check">
-                                <input type="checkbox" class="form-check-input" checked="">
-                                <span class="form-check-label">Remember</span>
-                            </label> -->
-                        </div> <!-- form-group form-check .// -->
+                        <% if ( message ){%>
+                            <div class="alert alert-danger text-center mt-5" role="alert">
+                                <%- message %>
+                            </div>
+                            <%}%>
+                        <!-- form-group form-check .// -->
                         <div class="mb-4">
                             <button type="submit" class="btn btn-primary w-100"> Login </button>
                         </div> <!-- form-group// -->

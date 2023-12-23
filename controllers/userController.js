@@ -8,7 +8,7 @@ const asyncHandler = require('express-async-handler');
 const Swal = require('sweetalert2');
 const { logout } = require('./adminController');
 const Banner= require('../models/bannerModel')
-
+const Coupon = require('../models/couponModel')
 const bcrypt = require("bcrypt");
 const otpStore = {}; // In-memory store for simplicity
 
@@ -734,7 +734,11 @@ const userAbout = async (req, res) => {
       console.log(userData.username);
       const orders = await Oder.find({ userId: userId }).sort({ createdOn: -1 });
       console.log(orders);
-      res.render('userAccount', { user: userData, order: orders })
+
+      const coupon = await Coupon.find({
+         'user.userId': { $ne: userData._id }
+     });
+      res.render('userAccount', { user: userData, order: orders,coupon:coupon })
 
 
    } catch (error) {

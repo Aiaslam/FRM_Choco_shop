@@ -43,7 +43,7 @@ const verifyUser = async (req, res) => {
             if (userData.is_admin === 0) {
                console.log('out from  userData.is_admin === 0');
 
-               res.render('login', { errorMessage: 'Invalid Admin' });
+               res.render('login', { message: 'Invalid Admin' });
             } else {
 
                req.session.admin_id = userData._id;
@@ -51,13 +51,13 @@ const verifyUser = async (req, res) => {
             }
          } else {
             // In your server-side code
-            res.render('login', { errorMessage: 'Invalid Password' });
+            res.render('login', { message: 'Invalid Password' });
 
 
          }
       } else {
          // In your server-side code
-         res.render('login', { errorMessage: 'Invalid Admin' });
+         res.render('login', { emessage: 'Invalid Admin' });
 
 
       }
