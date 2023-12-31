@@ -57,7 +57,9 @@ const { orderListing,
   changeStatusreturned,
   changeStatusCanseled,
   loadSalesReport,
-  salesReport
+  salesReport,
+  CanceledsalesReport,
+  loadCanceledSalesReport
 
 } = require('../controllers/orderController')
 
@@ -151,6 +153,13 @@ adminRouter.get('/changeStatusCanseled', auth.isAdminAuth, changeStatusCanseled)
 adminRouter.get('/salesReportPage', auth.isAdminAuth, loadSalesReport)
 
 adminRouter.get('/salesReport', auth.isAdminAuth, salesReport)
+
+adminRouter.get('/graphReport', auth.isAdminAuth, adminController.graphReport)
+
+adminRouter.get('/CanceledsalesReportPage', auth.isAdminAuth, loadCanceledSalesReport)
+            
+adminRouter.get('/CanceledsalesReport', auth.isAdminAuth, CanceledsalesReport)
+
 //---------------------------------------------------------
 
 // sales report---------------

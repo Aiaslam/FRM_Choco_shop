@@ -20,9 +20,7 @@
                         <h2 class="content-title card-title">Order List </h2>
                         <p>Lorem ipsum dolor sit amet.</p>
                     </div>
-                    <div>
-                        <input type="text" placeholder="Search order ID" class="form-control bg-white">
-                    </div>
+                    
                 </div>
                 <div class="card mb-4">
                     <header class="card-header">
@@ -51,7 +49,7 @@
                                             <td><%= 321+i %></td>
                                             <td><b><%= orders[i].product[j].title  %></b></td>
                                            
-                                            <td>$<%= orders[i].totalPrice %></td>
+                                            <td>₹<%= orders[i].totalPrice %></td>
 
                                             <% if (orders[i].status=='pending') { %>
 
@@ -74,9 +72,9 @@
                                                     <td class="text-end">
                                                         <a href="/orderdtl?id=<%= orders[i].product[j]._id %>&orderId=<%= orders[i]._id %>" class="btn btn-md rounded font-sm">Detail</a>
                                                         <!-- <% if (orders[i].status === 'pending' || orders[i].status === 'conformed' || orders[i].status === 'shipped') { %>
-                                                            <a href="/cancelProduct?productId=<%= encodeURIComponent(orders[i].product[j]._id) %>&orderId=<%= encodeURIComponent(orders[i]._id) %>" class="btn btn-md rounded font-sm">Cancel Product</a>
-                                                        <% } %> -->
-                                                     
+                                                            <a href="/cancelProduct?productId=<%= encodeURIComponent(orders[i].product[j].ProductId) %>&orderId=<%= encodeURIComponent(orders[i]._id) %>" class="btn btn-md rounded font-sm">Cancel Product</a>
+                                                            <% } %>
+                                                      -->
                                                         <% if (orders[i].status === 'pending' || orders[i].status === 'conformed' || orders[i].status === 'shipped' || orders[i].status === 'delivered') { %>
                                                             <a href="/canselOrder?orderId=<%= orders[i]._id %>" class="btn btn-md rounded font-sm">Cancel Order</a>
                                                         <% } %>       

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-
+const uuid = require('uuid');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const productModel = new mongoose.Schema({
+ 
   title: {
     type: String,
     required: true,

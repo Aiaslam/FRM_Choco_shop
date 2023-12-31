@@ -58,7 +58,19 @@
             </div>
 
         </div>
+        <br><br>
+                <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200" id="filterChart">
+                    <option value="all">Report</option>
+                    <option value="today">Report of Today</option>
+                    <option value="week">Report of this week</option>
+                    <option value="month">Report of this month</option>
+                    <option value="year">Report of this year</option>
+                    
+                </select>
+
+                <br><br>
         <div class="row">
+            
             <div class="col-xl-8 col-lg-12">
                 <div class="card mb-4">
 
@@ -205,7 +217,7 @@
 
 
     </section> <!-- content-main end// -->
-    
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -215,26 +227,46 @@
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                     datasets: [
-                        {
-                            label: 'Products',
-                            tension: 0.3,
-                            fill: true,
-                            backgroundColor: 'rgba(44, 120, 220, 0.2)',
-                            borderColor: 'rgba(44, 120, 220)',
-                            data: <%= JSON.stringify(productsPerMonth) %>
+                        // {
+                        //     label: 'Products',
+                        //     tension: 0.3,
+                        //     fill: true,
+                        //     backgroundColor: 'rgba(44, 120, 220, 0.2)',
+                        //     borderColor: 'rgba(44, 120, 220)',
+                        //     data: <%= JSON.stringify(productsPerMonth) %>
 
-                            },
+                        //     },
                         {
                             label: 'Sales',
                             tension: 0.3,
                             fill: true,
-                            backgroundColor: 'rgba(4, 209, 130, 0.2)',
+                            backgroundColor: 'rgba(46, 249, 135, 0.3)',
                             borderColor: 'rgb(4, 209, 130)',
-                            data: <%= JSON.stringify(monthlySalesArray) %>
-                            }
+                            data: <%= JSON.stringify(SalesArray) %>
+                            },
+
+                            {
+                            label: 'Returend Order',
+                            tension: 0.3,
+                            fill: true,
+                            backgroundColor: 'rgba(128, 0, 128, 0.3)',
+                            borderColor: 'rgb(75, 0, 130)',
+                            data: <%= JSON.stringify(returnArray) %>
+                            },
+
+                            {
+                            label: 'Canceled Order',
+                            tension: 0.3,
+                            fill: true,
+                            backgroundColor: 'rgba(255, 99, 71, 0.3)',
+                             borderColor: 'rgb(220, 20, 60)',
+
+                            data: <%= JSON.stringify(canceledArray) %>
+                            },
+
                     ]
                 },
-                options: {
+                      options: {
                     plugins: {
                         legend: {
                             labels: {
@@ -245,6 +277,32 @@
                 }
             });
         });
-    </script>
 
-    <%- include('footer') %>    
+
+        
+    </script>
+        <script>
+
+            document.getElementById('filterChart').addEventListener('change', function () {
+                const selectedValue = this.value;
+                switch (selectedValue) {
+                    case 'today':
+                        window.location.href = '/admin/graphReport?date=today';
+                        break;
+                    case 'week':
+                        window.location.href = '/admin/graphReport?date=week';
+                        break;
+                    case 'month':
+                        window.location.href = '/admin/graphReport?date=month';
+                        break;
+                    case 'year':
+                        window.location.href = '/admin/graphReport?date=year';
+                        break;
+                        
+                    default:
+                        window.location.href = '/admin/graphReport?date=all';
+                }
+            });
+        </script> 
+
+    <%- include('footer') %>

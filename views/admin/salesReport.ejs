@@ -1,5 +1,28 @@
 <%- include('header') %>
+<style>
+    /* Add specific styles for the Sales Report page */
+.content-title {
+  color: #007bff; /* Blue color for the title */
+}
 
+.table th, .table td {
+  text-align: center; /* Center-align content in table cells */
+}
+
+/* Add more styles as needed */
+
+/* Add specific styles for the Canceled Sales Report page */
+.content-title {
+  color: #dc3545; /* Red color for the title */
+}
+
+.table th, .table td {
+  text-align: left; /* Left-align content in table cells */
+}
+
+/* Add more styles as needed */
+
+</style>
     <section class="content-main">
         <div class="content-header">
             <div>
@@ -11,7 +34,11 @@
                     <option value="week">Report of this week</option>
                     <option value="month">Report of this month</option>
                     <option value="year">Report of this year</option>
+                    
                 </select>
+
+                <br><br>
+                
             </div>
             <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                     
@@ -48,7 +75,7 @@
                                         <% for (let i=0; i < orders.length;i++) { %>
                                             <% for (let j=0; j < orders[i].product.length; j++) { %>
                                                 <tr>
-                                                    <td>2323</td>
+                                                    <td><%=(21*i)+3*100 %></td>
                                                     <td><b>
                                                             <%= orders[i].product[j].title %>
                                                         </b></td>
@@ -140,50 +167,7 @@
                     </div>
                     <% } %>
             </div>
-            <div class="col-md-3">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="mb-3">Filter by</h5>
-                        <form>
-                            <div class="mb-4">
-                                <label for="order_id" class="form-label">Order ID</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="order_id">
-                            </div>
-                            <div class="mb-4">
-                                <label for="order_customer" class="form-label">Customer</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="order_customer">
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Order Status</label>
-                                <select class="form-select">
-                                    <option>Published</option>
-                                    <option>Draft</option>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label for="order_total" class="form-label">Total</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="order_total">
-                            </div>
-                            <div class="mb-4">
-                                <label for="order_created_date" class="form-label">Date Added</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="order_created_date">
-                            </div>
-                            <div class="mb-4">
-                                <label for="order_modified_date" class="form-label">Date Modified</label>
-                                <input type="text" placeholder="Type here" class="form-control"
-                                    id="order_modified_date">
-                            </div>
-                            <div class="mb-4">
-                                <label for="order_customer_1" class="form-label">Customer</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="order_customer_1">
-                            </div>
-                        </form>
-
-                    </div>
-
-                </div> <!-- card end// -->
-
-            </div>
+            
 
         </div>
 
@@ -205,6 +189,7 @@
                 case 'year':
                     window.location.href = '/admin/salesReport?date=year';
                     break;
+                    
                 default:
                     window.location.href = '/admin/salesReport?date=all';
             }

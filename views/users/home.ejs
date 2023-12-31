@@ -372,29 +372,7 @@
 
 
     <script>
-        function addTocart(id) {
-            console.log('Product ID:', id);
-            console.log('Request URL:', `/addToCart?id=${id}`);
-            
-            $.ajax({
-                url: `/addToCart?id=${id}`,
-                method: "get",
-                success: (response) => {
-                    if (response.status) {
-                        Swal.fire({
-                            title: 'ADD TO CART',
-                            text: 'Product Added to cart',
-                            icon: 'success',
-                            timer: 1000,
-                            showConfirmButton: false, // This removes the button
-                        });
-                    } else {
-                        alert('error');
-                    }
-                }
-            });
-        }
-     
+        
         function addToCart(id) {
             console.log('Product ID:', id);
             $.ajax({
@@ -450,40 +428,42 @@
             });
         });
     </script>
-    <script>
-       function addToWishlist(id) {
-    console.log(id, 'id');
+  <script>
+    function addToWishlist(id) {
+        console.log(id, 'id');
 
-    // Send AJAX request to add to wishlist
-    $.ajax({
-        url: `/addToWishlist?id=${id}`,
-        method: "post",
-        success: (response) => {
-            if (response.status) {
-            console.log('Successfully added to wishlist');
+        // Send AJAX request to add to wishlist
+        $.ajax({
+            url: `/addToWishlist?id=${id}`,
+            method: "post",
+            success: (response) => {
+                if (response.success) {
+                    // Product added successfully
+                    Swal.fire({
+                        title: "Success",
+                        text: "Item added to wishlist successfully!",
+                        icon: "success",
+                    });
+                } else {
+                    // Display error message
+                    Swal.fire({
+                        title: "Oops",
+                        text: response.message || "Something went wrong",
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                }
 
-            // Display success SweetAlert
-            Swal.fire({
-                title: "Success",
-                text: "Item added to wishlist successfully!",
-                icon: "success",
-            });
+                // You can add additional handling or redirect here
+            },
+            error: (error) => {
+                // Handle AJAX error
+                console.error('Error adding to wishlist:', error);
+                // You can add additional error handling here
+            }
+        });
+    }
+</script>
 
-        } else {
-                        Swal.fire({
-                                title: 'Ooops',
-                                text: 'you are not autherised,please Login',
-                                icon: 'error',
-                                timer: 2000,
-                                showConfirmButton: false, // This removes the button
-                            });
-                    }
-
-            // You can add additional handling or redirect here
-        }
-    });
-}
-
-
-    </script>
     <%- include('footer')  %>

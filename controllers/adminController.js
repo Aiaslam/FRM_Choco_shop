@@ -95,7 +95,7 @@ const loadhome = async (req, res) => {
 
       const totalRevenue = orders.reduce((total, order) => total + order.totalPrice, 0)
 
-      const monthlySales = await Oder.aggregate([
+      const Sales = await Oder.aggregate([
          {
             $match: {
                status: 'delivered',
@@ -115,8 +115,60 @@ const loadhome = async (req, res) => {
             },
          },
       ])
-      const monthlySalesArray = Array.from({ length: 12 }, (_, index) => {
-         const monthData = monthlySales.find((item) => item._id === index + 1);
+
+      const returnedSales = await Oder.aggregate([
+         {
+            $match: {
+               status: 'returned',
+            },
+         },
+         {
+            $group: {
+               _id: {
+                  $month: '$createdOn'
+               },
+               count: { $sum: 1 },
+            },
+         },
+         {
+            $sort: {
+               '_id': 1,
+            },
+         },
+      ])
+
+      const calceledSales = await Oder.aggregate([
+         {
+            $match: {
+               status: 'canceled',
+            },
+         },
+         {
+            $group: {
+               _id: {
+                  $month: '$createdOn'
+               },
+               count: { $sum: 1 },
+            },
+         },
+         {
+            $sort: {
+               '_id': 1,
+            },
+         },
+      ])
+      const canceledArray = Array.from({ length: 12 }, (_, index) => {
+         const monthData = calceledSales.find((item) => item._id === index + 1);
+         return monthData ? monthData.count : 0;
+      });
+
+      const returnArray = Array.from({ length: 12 }, (_, index) => {
+         const monthData = returnedSales.find((item) => item._id === index + 1);
+         return monthData ? monthData.count : 0;
+      });
+
+      const SalesArray = Array.from({ length: 12 }, (_, index) => {
+         const monthData = Sales.find((item) => item._id === index + 1);
          return monthData ? monthData.count : 0;
       });
 
@@ -134,7 +186,7 @@ const loadhome = async (req, res) => {
       ///----------this is for the product data--end----
 
       console.log(orders);
-      res.render('home', { totalRevenue, orderCount, productCount, catogaryCount, monthlySalesArray, productsPerMonth, latestOrders });
+      res.render('home', { totalRevenue, orderCount, productCount, catogaryCount, SalesArray, productsPerMonth, latestOrders, returnArray ,canceledArray});
 
    } catch (error) {
 
@@ -1142,6 +1194,530 @@ const uploadCroppedImage = async (req, res) => {
 };
 
 
+const graphReport = asyncHandler(async (req, res) => {
+   try {
+       const date = req.query.date;
+        const format = req.query.format;
+       let Sales;
+       let returnedSales;
+       let calceledSales;
+
+       const latestOrders = await Oder.find().sort({ createdOn: -1 }).limit(5);
+       const products = await product.find()
+       // const orders = await Oder.find({ status: 'delivered' })
+       const orders = await Oder.aggregate([{
+          $match: {
+ 
+             status: { $ne: 'delivered' },
+             status: { $ne: 'cancelled' },
+ 
+          }
+       }])
+       console.log(orders, 'this is the orders that i find using aggrigate');
+       const catogaries = await category.find()
+ 
+       const productCount = products.length
+       const orderCount = orders.length
+       const catogaryCount = catogaries.length
+ 
+       const totalRevenue = orders.reduce((total, order) => total + order.totalPrice, 0)
+
+       const currentDate = new Date();
+       // function to find first day of month
+       function getFirstOfMonth(date) {
+           return new Date(date.getFullYear(), date.getMonth(), 1)
+       }
+
+       function getFirstDayofYear(date) {
+           return new Date(date.getFullYear(), 0, 1)
+       }
+
+       const todayStart = new Date();
+       todayStart.setHours(0, 0, 0, 0);
+       
+       const todayEnd = new Date();
+       todayEnd.setHours(23, 59, 59, 999);
+       
+       switch (date) {
+           case 'today':
+            Sales = await Oder.aggregate([
+               {
+                 $match: {
+                   status: 'delivered',
+                   createdOn: {
+                     $gte: todayStart,
+                     $lt: todayEnd,
+                   },
+                 },
+               },
+               {
+                 $group: {
+                   _id: { $month: '$createdOn' },
+                   count: { $sum: 1 },
+                 },
+               },
+               {
+                 $sort: {
+                   '_id': 1,
+                 },
+               },
+             ]);
+               var SalesArray = Array.from({ length: 12 }, (_, index) => {
+                  const monthData = Sales.find((item) => item._id === index + 1);
+                  return monthData ? monthData.count : 0;
+               });
+                  
+               returnedSales = await Oder.aggregate([
+                  {
+                    $match: {
+                      status: 'returned',
+                      createdOn: {
+                        $gte: todayStart,
+                        $lt: todayEnd,
+                      },
+                    },
+                  },
+                  {
+                    $group: {
+                      _id: { $month: '$createdOn' },
+                      count: { $sum: 1 },
+                    },
+                  },
+                  {
+                    $sort: {
+                      '_id': 1,
+                    },
+                  },
+                ]);
+
+              var returnArray = Array.from({ length: 12 }, (_, index) => {
+               const monthData = returnedSales.find((item) => item._id === index + 1);
+               return monthData ? monthData.count : 0;
+            });
+
+            calceledSales = await Oder.aggregate([
+               {
+                 $match: {
+                   status: 'canceled',
+                   createdOn: {
+                     $gte: todayStart,
+                     $lt: todayEnd,
+                   },
+                 },
+               },
+               {
+                 $group: {
+                   _id: { $month: '$createdOn' },
+                   count: { $sum: 1 },
+                 },
+               },
+               {
+                 $sort: {
+                   '_id': 1,
+                 },
+               },
+             ]);
+           var canceledArray = Array.from({ length: 12 }, (_, index) => {
+            const monthData = calceledSales.find((item) => item._id === index + 1);
+            return monthData ? monthData.count : 0;
+         });
+
+
+               break
+           case 'week':
+               const startofWeek = new Date(currentDate)
+               startofWeek.setDate(currentDate.getDate() - currentDate.getDay())
+               startofWeek.setHours(0, 0, 0, 0)
+
+               const endOfWeek = new Date(startofWeek)
+               endOfWeek.setDate(startofWeek.getDate() + 6)
+               endOfWeek.setHours(23, 59, 59, 999);
+
+               Sales = await Oder.aggregate([
+                  {
+                    $match: {
+                      status: 'delivered',
+                      createdOn: {
+                        $gte: startofWeek,
+                        $lt: endOfWeek,
+                      },
+                    },
+                  },
+                  {
+                    $group: {
+                      _id: { $month: '$createdOn' },
+                      count: { $sum: 1 },
+                    },
+                  },
+                  {
+                    $sort: {
+                      '_id': 1,
+                    },
+                  },
+                ]);
+              var SalesArray = Array.from({ length: 12 }, (_, index) => {
+                 const monthData = Sales.find((item) => item._id === index + 1);
+                 return monthData ? monthData.count : 0;
+              });
+                 
+              returnedSales = await Oder.aggregate([
+               {
+                 $match: {
+                   status: 'returned',
+                   createdOn: {
+                     $gte: startofWeek,
+                     $lt: endOfWeek,
+                   },
+                 },
+               },
+               {
+                 $group: {
+                   _id: { $month: '$createdOn' },
+                   count: { $sum: 1 },
+                 },
+               },
+               {
+                 $sort: {
+                   '_id': 1,
+                 },
+               },
+             ]);
+           
+
+             var returnArray = Array.from({ length: 12 }, (_, index) => {
+              const monthData = returnedSales.find((item) => item._id === index + 1);
+              return monthData ? monthData.count : 0;
+           });
+
+           calceledSales = await Oder.aggregate([
+            {
+              $match: {
+                status: 'canceled',
+                createdOn: {
+                  $gte: startofWeek,
+                  $lt: endOfWeek,
+                },
+              },
+            },
+            {
+              $group: {
+                _id: { $month: '$createdOn' },
+                count: { $sum: 1 },
+              },
+            },
+            {
+              $sort: {
+                '_id': 1,
+              },
+            },
+          ]);
+          var canceledArray = Array.from({ length: 12 }, (_, index) => {
+           const monthData = calceledSales.find((item) => item._id === index + 1);
+           return monthData ? monthData.count : 0;
+        });
+               break;
+
+           case 'month':
+            const startOfMonth = getFirstOfMonth(currentDate);
+            const endOfMonth = new Date(
+              currentDate.getFullYear(),
+              currentDate.getMonth() + 1,
+              0,
+              23,
+              59,
+              59,
+              999
+            );
+            Sales = await Oder.aggregate([
+               {
+                 $match: {
+                   status: 'delivered',
+                   createdOn: {
+                     $gte: startOfMonth,
+                     $lt: endOfMonth,
+                   },
+                 },
+               },
+               {
+                 $group: {
+                   _id: { $month: '$createdOn' },
+                   count: { $sum: 1 },
+                 },
+               },
+               {
+                 $sort: {
+                   '_id': 1,
+                 },
+               },
+             ]);
+              var SalesArray = Array.from({ length: 12 }, (_, index) => {
+                 const monthData = Sales.find((item) => item._id === index + 1);
+                 return monthData ? monthData.count : 0;
+              });
+                 
+              returnedSales = await Oder.aggregate([
+               {
+                 $match: {
+                   status: 'returned',
+                   createdOn: {
+                     $gte: startOfMonth,
+                     $lt: endOfMonth,
+                   },
+                 },
+               },
+               {
+                 $group: {
+                   _id: { $month: '$createdOn' },
+                   count: { $sum: 1 },
+                 },
+               },
+               {
+                 $sort: {
+                   '_id': 1,
+                 },
+               },
+             ]);
+
+             var returnArray = Array.from({ length: 12 }, (_, index) => {
+              const monthData = returnedSales.find((item) => item._id === index + 1);
+              return monthData ? monthData.count : 0;
+           });
+
+           calceledSales = await Oder.aggregate([
+            {
+              $match: {
+                status: 'canceled',
+                createdOn: {
+                  $gte: startOfMonth,
+                  $lt: endOfMonth,
+                },
+              },
+            },
+            {
+              $group: {
+                _id: { $month: '$createdOn' },
+                count: { $sum: 1 },
+              },
+            },
+            {
+              $sort: {
+                '_id': 1,
+              },
+            },
+          ]);
+          var canceledArray = Array.from({ length: 12 }, (_, index) => {
+           const monthData = calceledSales.find((item) => item._id === index + 1);
+           return monthData ? monthData.count : 0;
+        });
+               break;
+           case 'year':
+            const startOfYear = getFirstDayofYear(currentDate);
+            const endOfYear = new Date(
+              currentDate.getFullYear(),
+              11,
+              31,
+              23,
+              59,
+              59,
+              999
+            );
+            Sales = await Oder.aggregate([
+               {
+                 $match: {
+                   status: 'delivered',
+                   createdOn: {
+                     $gte: startOfYear,
+                     $lt: endOfYear,
+                   },
+                 },
+               },
+               {
+                 $group: {
+                   _id: { $month: '$createdOn' },
+                   count: { $sum: 1 },
+                 },
+               },
+               {
+                 $sort: {
+                   '_id': 1,
+                 },
+               },
+             ]);
+              var SalesArray = Array.from({ length: 12 }, (_, index) => {
+                 const monthData = Sales.find((item) => item._id === index + 1);
+                 return monthData ? monthData.count : 0;
+              });
+                 
+              returnedSales = await Oder.aggregate([
+               {
+                 $match: {
+                   status: 'returned',
+                   createdOn: {
+                     $gte: startOfYear,
+                     $lt: endOfYear,
+                   },
+                 },
+               },
+               {
+                 $group: {
+                   _id: { $month: '$createdOn' },
+                   count: { $sum: 1 },
+                 },
+               },
+               {
+                 $sort: {
+                   '_id': 1,
+                 },
+               },
+             ]);
+
+             var returnArray = Array.from({ length: 12 }, (_, index) => {
+              const monthData = returnedSales.find((item) => item._id === index + 1);
+              return monthData ? monthData.count : 0;
+           });
+
+           calceledSales = await Oder.aggregate([
+            {
+              $match: {
+                status: 'canceled',
+                createdOn: {
+                  $gte: startOfYear,
+                  $lt: endOfYear,
+                },
+              },
+            },
+            {
+              $group: {
+                _id: { $month: '$createdOn' },
+                count: { $sum: 1 },
+              },
+            },
+            {
+              $sort: {
+                '_id': 1,
+              },
+            },
+          ]);
+          var canceledArray = Array.from({ length: 12 }, (_, index) => {
+           const monthData = calceledSales.find((item) => item._id === index + 1);
+           return monthData ? monthData.count : 0;
+        });
+
+               break;
+           default:
+               // Fetch all orders
+               startOfMonth = getFirstOfMonth(currentDate);
+               endOfMonth = new Date(
+                 currentDate.getFullYear(),
+                 currentDate.getMonth() + 1,
+                 0,
+                 23,
+                 59,
+                 59,
+                 999
+               );
+               Sales = await Oder.aggregate([
+                  {
+                    $match: {
+                      status: 'delivered',
+                      createdOn: {
+                        $gte: startOfMonth,
+                        $lt: endOfMonth,
+                      },
+                    },
+                  },
+                  {
+                    $group: {
+                      _id: { $month: '$createdOn' },
+                      count: { $sum: 1 },
+                    },
+                  },
+                  {
+                    $sort: {
+                      '_id': 1,
+                    },
+                  },
+                ]);
+              var SalesArray = Array.from({ length: 12 }, (_, index) => {
+                 const monthData = Sales.find((item) => item._id === index + 1);
+                 return monthData ? monthData.count : 0;
+              });
+                 
+              returnedSales = await Oder.aggregate([
+               {
+                 $match: {
+                   status: 'returned',
+                   createdOn: {
+                     $gte: startOfMonth,
+                     $lt: endOfMonth,
+                   },
+                 },
+               },
+               {
+                 $group: {
+                   _id: { $month: '$createdOn' },
+                   count: { $sum: 1 },
+                 },
+               },
+               {
+                 $sort: {
+                   '_id': 1,
+                 },
+               },
+             ]);
+
+             var returnArray = Array.from({ length: 12 }, (_, index) => {
+              const monthData = returnedSales.find((item) => item._id === index + 1);
+              return monthData ? monthData.count : 0;
+           });
+
+           calceledSales = await Oder.aggregate([
+            {
+              $match: {
+                status: 'canceled',
+                createdOn: {
+                  $gte: startOfMonth,
+                  $lt: endOfMonth,
+                },
+              },
+            },
+            {
+              $group: {
+                _id: { $month: '$createdOn' },
+                count: { $sum: 1 },
+              },
+            },
+            {
+              $sort: {
+                '_id': 1,
+              },
+            },
+          ]);
+          var canceledArray = Array.from({ length: 12 }, (_, index) => {
+           const monthData = calceledSales.find((item) => item._id === index + 1);
+           return monthData ? monthData.count : 0;
+        });       }
+       
+    ///----------this is for the product data------
+    const productsPerMonth = Array(12).fill(0);
+
+    // Iterate through each product
+    products.forEach(product => {
+       // Extract month from the createdAt timestamp
+       const creationMonth = product.createdAt.getMonth(); // JavaScript months are 0-indexed
+
+       // Increment the count for the corresponding month
+       productsPerMonth[creationMonth]++;
+    });
+    ///----------this is for the product data--end----
+console.log( SalesArray,'SalesArray',returnArray ,'returnArray',canceledArray,'canceledArray##################################################');
+    console.log(orders);
+    res.render('home', { totalRevenue, orderCount, productCount, catogaryCount, SalesArray, productsPerMonth, latestOrders, returnArray ,canceledArray});   
+   } catch (error) {
+       console.log(error);
+   }
+})
+
 
 module.exports = {
    loadLogin,
@@ -1176,6 +1752,7 @@ module.exports = {
    unlistProduct,
    unlistCategory,
    ListCategory,
-   searchProduct
+   searchProduct,
+   graphReport
 
 }

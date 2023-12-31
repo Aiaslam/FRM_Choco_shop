@@ -68,7 +68,7 @@
                                   
                                     <tr>
                                         <th>SubTotal</th>
-                                        <td class="product-subtotal" id="subtotalValue" colspan="2">₹<%= sum %></td>
+                                        <td class="product-subtotal" id="subtotalValue" colspan="2">₹<%= total %></td>
                                       </tr>
                                       <% if (offer){%>
                                         <tr>
@@ -78,6 +78,11 @@
                                           <td colspan="2"><em><%= offer %></em></td>
                                         </tr>
                                         <tr>
+                                            <tr id="couponRow">
+                                                <th>Coupon Discount</th>
+                                                <td colspan="2" class="product-subtotal" id="couponDiscount">₹0.00</td>
+                                            </tr>
+                                            
                                             <th>Total</th>          
                                                                                                    
                                             <td colspan="2" class="product-subtotal"><span id="totalValue" value="<%= sum %>" class="font-xl text-brand fw-900">₹<%= sum %></span></td>
@@ -95,7 +100,7 @@
                                       </tr> -->
                             </table>
 
-                            <% if (coupon.length > 0) { %>
+                            <% if (coupon.length > 0 && sum >= coupon[0].minimumAmount) { %>
                                 <div class="col-lg-3">
                                     <button class="btn btn-sm" type="button" data-toggle="modal" data-target="#exampleModalCenter"  > Your Coupons</button>
                                     <br><br>
@@ -353,9 +358,19 @@
             const displayedSumElement = document.getElementById('totalValue');
             displayedSumElement.textContent = '₹' + newSum.toFixed(2);
     
+           // Show the coupon-related row
+          const couponRow = document.getElementById('couponRow');
+          const couponDiscountElement = document.getElementById('couponDiscount');
+          couponDiscountElement.textContent = '₹' + couponOfferPrice.toFixed(2);
+          couponRow.style.display = ''; // Show the coupon-related row
+
+
+
             Swal.fire('Coupon Valid!', `Coupon code '${couponCode}' is valid.`);
           } else {
             Swal.fire('Invalid Coupon', `Coupon code '${couponCode}' is not valid.`);
+            const couponRow = document.getElementById('couponRow');
+          couponRow.style.display = 'none';
           }
         })
         .catch(error => {
@@ -683,6 +698,7 @@ async function placeOrder(userId) {
 
 
 </script>
+
 
 
 

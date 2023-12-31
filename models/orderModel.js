@@ -1,11 +1,15 @@
 const mongoose = require('mongoose'); // Erase if already required
-
-
+const { v4: uuidv4 } = require('uuid');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 
 // Declare the Schema of the Mongo model
 var oderSchema = new mongoose.Schema({
+    orderId: {
+        type: String,
+        default: uuidv4,
+        unique: true,
+      },
     totalPrice: {
         required: true,
         type: Number

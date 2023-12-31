@@ -6,6 +6,7 @@ const Coupon = require('../models/couponModel')
 const ExcelJS = require('exceljs');
 const Oder = require('../models/orderModel')
 var instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_SECRETKEY })
+const mongoose = require('mongoose');
 
 
 
@@ -15,9 +16,11 @@ const checkout = asyncHandler(async (req, res) => {
     try {
         const id = req.session.user
         const user = await User.findById(id)
-        const coupon = await Coupon.find({
-            'user.userId': { $ne: user._id }
-        });
+
+        // const user = await User.findById(id)
+        // const coupon = await Coupon.find({
+        //     'user.userId': { $ne: user._id }
+        // });
         // console.log('Valid coupons:', coupon);
 
 
@@ -30,12 +33,21 @@ const checkout = asyncHandler(async (req, res) => {
            
         }
 
+        let couponprice=0
+
         let sum = 0;
         for (let i = 0; i < user.cart.length; i++) {
             sum += user.cart[i].subTotal
         }
         sum = Math.round(sum * 100) / 100;
-        res.render('checkOut', { user, product, sum ,coupon,offer })
+
+        const coupon = await Coupon.find({
+            'user.userId': { $ne: user._id },
+            
+        });
+             
+        let total=sum
+        res.render('checkOut', { user, product, sum ,coupon,offer,couponprice,total})
 
     } catch (error) {
         console.log('Error form oder Ctrl in the function chekOut', error);
@@ -308,6 +320,7 @@ const canselOder = asyncHandler(async (req, res) => {
 
     const canselSingleOrder = asyncHandler(async (req, res) => {
         try {console.log('entered to find cancel single orde');
+            const ObjectId = mongoose.Types.ObjectId;
             const userId = req.session.user;
              console.log(userId,'userId');
             const user = await User.findOne({ _id: userId });
@@ -319,8 +332,16 @@ const canselOder = asyncHandler(async (req, res) => {
     
             const orderId = req.query.orderId;
             console.log(orderId,'orderId');
-            const productIdToCancel = req.query.productId; // Add productId parameter
+            const productIdToCancel = req.query.productId; 
+            
+
+            // Add productId parameter
             console.log('this is .....',productIdToCancel,'...productIdToCancel');
+            // checking purpose only--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+               let productDetails = await Product.findById(productIdToCancel)
+
+                console.log("this is the produt that is going to delete ***************************",productDetails,"*****************************************");
+            //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             const order = await Oder.findById(orderId);
             console.log(order,'order');
     
@@ -328,42 +349,33 @@ const canselOder = asyncHandler(async (req, res) => {
                 return res.status(404).json({ message: 'Order not found' });
             }
     
-            // Find the product to cancel in the order
-            const productDataToCancel = Array.isArray(order.product) 
-            ? order.product.find(productData => productData.ProductId.toString() === productIdToCancel)
-            : null;
-        
-        console.log(productDataToCancel, 'productDataToCancel');
-        
-    
-            if (!productDataToCancel) {
-                return res.status(404).json({ message: 'Product not found in the order' });
-            }
-    
-            // Update the status of the specific product in the order
-            productDataToCancel.status = 'canceled';
-            console.log('after changing the status:', productDataToCancel.status);
-    
-            // Update the order's total price by subtracting the canceled product's price
-            console.log(order.totalPrice,'order.totalPrice before');
-            order.totalPrice -= productDataToCancel.price;
-            console.log(order.totalPrice,'order.totalPrice after');
-    
-            // Update the quantity of the canceled product in the product collection
-            const product = await Product.findById(productIdToCancel);
-            console.log(product,'product');
-    
-            if (product) {
-                product.quantity += productDataToCancel.quantity;
-                await product.save();
-            }
-    
-            // Save the updated order
+            const isValidObjectId = mongoose.Types.ObjectId.isValid(productIdToCancel);
+            let convertedProductId;
+if (isValidObjectId) {
+  convertedProductId = new ObjectId(productIdToCancel);
+  console.log("convertedProductId",convertedProductId);
+} else {
+  console.error('Invalid ObjectId:', productIdToCancel);
+}
+             let products=order.product
+             console.log("products(order array)=",products);
+            const indexToDelete = products.findIndex(product => product.ProductId === convertedProductId);
+           console.log(indexToDelete,"indexToDelete");
+
+            if (indexToDelete !== -1) {
+                products.splice(indexToDelete, 1);
+                console.log(`Product with ID ${productIdToCancel} deleted successfully.`);
+              } else {
+                console.log(`Product with ID ${productIdToCancel} not found.`);
+              }
+              
+              console.log(products);
+
             await order.save();
        console.log(order,'order after save');
             res.redirect('/allOderData');
         } catch (error) {
-            console.log('Error occurred in cart ctrl in function cancelOrder', error);
+            console.log('Error occurred in order ctrl in function cancelOrder', error);
             res.status(500).json({ message: 'Internal Server Error' });
         }
     });
@@ -618,7 +630,22 @@ const loadSalesReport = asyncHandler(async (req, res) => {
     }
 })
 
+const loadCanceledSalesReport = asyncHandler(async (req, res) => {
+    try {
 
+        const orders = await Oder.find({ status: 'canceled' })
+
+        const itemsperpage = 4
+        const currentpage = parseInt(req.query.page) || 1;
+        const startIndex = (currentpage - 1) * itemsperpage
+        const endIndex = startIndex + itemsperpage
+        const totalpages = Math.ceil(orders.length / 3)
+        const currentproduct = orders.slice(startIndex, endIndex)
+        res.render('canceledsalesReport', { orders: currentproduct, totalpages, currentpage })
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 const salesReport = asyncHandler(async (req, res) => {
     try {
@@ -748,6 +775,130 @@ const salesReport = asyncHandler(async (req, res) => {
 
 
 
+const CanceledsalesReport = asyncHandler(async (req, res) => {
+    try {
+        const date = req.query.date;
+         const format = req.query.format;
+        let orders;
+        const currentDate = new Date();
+        // function to find first day of month
+        function getFirstOfMonth(date) {
+            return new Date(date.getFullYear(), date.getMonth(), 1)
+        }
+
+        function getFirstDayofYear(date) {
+            return new Date(date.getFullYear(), 0, 1)
+        }
+
+
+        switch (date) {
+            case 'today':
+                orders = await Oder.find({
+                    status: 'canceled',
+                    createdOn: {
+                        $gte: new Date().setHours(0, 0, 0, 0),
+                        $lt: new Date().setHours(23, 59, 59, 999)
+                    },
+                })
+                break
+            case 'week':
+                const startofWeek = new Date(currentDate)
+                startofWeek.setDate(currentDate.getDate() - currentDate.getDay())
+                startofWeek.setHours(0, 0, 0, 0)
+
+                const endOfWeek = new Date(startofWeek)
+                endOfWeek.setDate(startofWeek.getDate() + 6)
+                endOfWeek.setHours(23, 59, 59, 999);
+
+                orders = await Oder.find({
+                    status: 'canceled',
+                    createdOn: {
+                        $gte: startofWeek,
+                        $lt: endOfWeek,
+
+                    },
+                })
+                break;
+
+            case 'month':
+                const startOfMonth = getFirstOfMonth(currentDate);
+                const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59, 999);
+
+                orders = await Oder.find({
+                    status: 'canceled',
+                    createdOn: {
+                        $gte: startOfMonth,
+                        $lt: endOfMonth,
+                    },
+                });
+                break;
+            case 'year':
+                const startOfYear = getFirstDayofYear(currentDate);
+                const endOfYear = new Date(currentDate.getFullYear(), 11, 31, 23, 59, 59, 999);
+
+                orders = await Oder.find({
+                    status: 'canceled',
+                    createdOn: {
+                        $gte: startOfYear,
+                        $lt: endOfYear,
+                    },
+                });
+
+                break;
+            default:
+                // Fetch all orders
+                orders = await Oder.find({ status: 'canceled' });
+        }
+        if (format === 'excel') {
+            // Generate Excel file
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Sales Report');
+
+            worksheet.columns = [
+                { header: 'Order ID', key: 'id', width: 30 },
+                { header: 'Product name', key: 'name', width: 30 },
+                { header: 'Price', key: 'price', width: 15 },
+                { header: 'Status', key: 'status', width: 20 },
+                { header: 'Date', key: 'date', width: 15 }
+                // ... Add more columns as needed
+            ];
+
+            // Add data to the worksheet
+            orders.forEach(order => {
+                order.product.forEach(product => {
+                    worksheet.addRow({
+                        id: order._id,
+                        name: product.title,
+                        price: order.totalPrice,
+                        status: order.status,
+                        date: order.createdOn.toLocaleDateString()
+                        // ... (Fill other columns as necessary)
+                    });
+                });
+            });
+
+            // Set response headers for Excel file
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename=sales-report.xlsx');
+
+            // Pipe the workbook to the response
+            await workbook.xlsx.write(res);
+            return res.end();
+        } else {
+
+        const itemsperpage = 3;
+        const currentpage = parseInt(req.query.page) || 1;
+        const startindex = (currentpage - 1) * itemsperpage;
+        const endindex = startindex + itemsperpage;
+        const totalpages = Math.ceil(orders.length / 3);
+        const currentproduct = orders.slice(startindex, endindex);
+
+        res.render('canceledsalesReport', { orders: currentproduct, totalpages, currentpage })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 
 //---------------------------------------
@@ -887,7 +1038,9 @@ module.exports = {
     canselSingleOrder,
     orderdtl,
     useWallet,
-    returnOrder
+    returnOrder,
+    CanceledsalesReport,
+    loadCanceledSalesReport
     
 
 }

@@ -181,8 +181,45 @@
 
 
                                     <li>
-                                        <a href='/allOderData'>O R D E R S</a>
+                                        <a href="<%= locals.user ? '/allOderData' : 'javascript:void(0);' %>" 
+                                            <% if (!locals.user) { %>
+                                                onclick="openSignupModal();"
+                                            <% } %>>
+                                            O R D E R S
+                                        </a>
+                                    
+                                        <!-- Your modal HTML -->
+                                        <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-light">
+                                                        <h5 class="modal-title" id="signupModalLabel">Login  to continue with Orders</h5>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Do you want to sign up?</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <!-- Update data-dismiss to data-bs-dismiss -->
+                                                        <button type="button" class="btn btn-light-red" data-bs-dismiss="modal">Cancel</button>
+                                                        <a href='/register' class="btn btn-light-red">Sign Up</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Add jQuery and Bootstrap scripts -->
+                                        <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI/tZ1XaIBlLVR1AEvLVpK92hFKtP/J/6I5PLZU4=" crossorigin="anonymous"></script>
+                                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-d7kV4F+53E1zL6K/AJ/7c+Vf5vYV5l9a6rKAdS64k9LwHcTmIS3bW6D4pVP+hqu6" crossorigin="anonymous"></script>
+                                        
+                                        <script>
+                                            function openSignupModal() {
+                                                $('#signupModal').modal('show');
+                                            }
+                                        </script>
+                                        
+                                        
                                     </li>
+                                    
                                 </ul>
                             </nav>
                         </div>
@@ -191,29 +228,107 @@
                     <div class="header-action-right">
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
-                                <a href="/displayWishList">
-                                    <img class="svgInject" alt="Evara"
-                                        src="/user/assets/imgs/theme/icons/icon-heart.svg">
+                                <% if (!locals.user) { %>
+                                    <!-- Add this block only when there is no user -->
+                                    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-light">
+                                                    <h5 class="modal-title" id="loginModalLabel">Log In</h5>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- Your log-in form or content goes here -->
+                                                    <p>Do you want to log in?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-light-red" data-bs-dismiss="modal">Cancel</button>
+                                                    <!-- Add a button/link for the user to log in -->
+                                                    <a href='/login' class="btn btn-light-red">Log In</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End of the modal block -->
+                                <% } %>
+                                
+                                <!-- Your existing wishlist icon code -->
+                                <!-- Wishlist and Cart Link -->
+<div class="header-action-icon-2">
+    <% if (locals.user) { %>
+        <!-- If user is signed in, display icons with counts -->
+        <a href="/displayWishList">
+            <img class="svgInject" alt="Evara" src="/user/assets/imgs/theme/icons/icon-heart.svg">
+            <% if (locals.user.wishlist.length > 0) { %>
+                <span class="pro-count blue">
+                    <%= locals.user.wishlist.length %>
+                </span>
+            <% } %>
+        </a>
 
-                                    <% if (locals.user && locals.user.wishlist.length> 0) { %>
-                                        <span class="pro-count blue">
-                                            <%= locals.user.wishlist.length %>
-                                        </span>
-                                        <% } %>
-                                </a>
-                            </div>
+        <a href="/displayCart">
+            <img alt="Evara" src="/user/assets/imgs/theme/icons/icon-cart.svg">
+            <% if (locals.user.cart.length > 0) { %>
+                <span class="pro-count blue">
+                    <%= locals.user.cart.length %>
+                </span>
+            <% } %>
+        </a>
+    <% } else { %>
+        <!-- If user is not signed in, display icons that trigger a common login modal -->
+        <a href="javascript:void(0);" onclick="openLoginModal('wishlist');">
+            <img class="svgInject" alt="Evara" src="/user/assets/imgs/theme/icons/icon-heart.svg">
+        </a>
 
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="/displayCart">
-                                    <img alt="Evara" src="/user/assets/imgs/theme/icons/icon-cart.svg">
+        <a href="javascript:void(0);" onclick="openLoginModal('cart');">
+            <img alt="Evara" src="/user/assets/imgs/theme/icons/icon-cart.svg">
+        </a>
+    <% } %>
+</div>
 
-                                    <% if (locals.user && locals.user.cart.length> 0) { %>
-                                        <span class="pro-count blue">
-                                            <%= locals.user.cart.length %>
-                                        </span>
-                                        <% } %>
-                                </a>
-                            </div>
+<!-- Common Login Modal -->
+<!-- Common Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="loginModalLabel">Login to continue</h5>
+            </div>
+            <div class="modal-body">
+                <p>You are not signed in. Do you want to log in?</p>
+            </div>
+            <div class="modal-footer">
+                <!-- Add a button/link for the user to log in -->
+                <a href='/login' class="btn btn-light-red">Log In</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery and Bootstrap scripts -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI/tZ1XaIBlLVR1AEvLVpK92hFKtP/J/6I5PLZU4=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-d7kV4F+53E1zL6K/AJ/7c+Vf5vYV5l9a6rKAdS64k9LwHcTmIS3bW6D4pVP+hqu6" crossorigin="anonymous"></script>
+
+<script>
+    function openLoginModal(source) {
+        // Pass the source (wishlist or cart) to the modal
+        $('#loginModal').modal('show').data('source', source);
+    }
+
+    function closeLoginModal() {
+        // Close the modal programmatically
+        $('#loginModal').modal('hide');
+    }
+
+    // Handle modal close event
+    $('#loginModal').on('hidden.bs.modal', function () {
+        // Clear the data attribute on modal close
+        $(this).removeData('source');
+    });
+</script>
+
+
+
+                            
 
                             <ul>
                                 <% if (locals.user) { %>
